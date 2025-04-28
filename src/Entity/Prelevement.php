@@ -32,7 +32,7 @@ class Prelevement
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Lieu $lieu = null;
+    private ?Emplacement $emplacement = null;
 
     #[ORM\ManyToOne(targetEntity: Preleveur::class)]
     #[ORM\JoinColumn(nullable: false)]
@@ -75,14 +75,14 @@ class Prelevement
         return $this;
     }
 
-    public function getLieu(): ?Lieu
+    public function getEmplacement(): ?Emplacement
     {
-        return $this->lieu;
+        return $this->emplacement;
     }
 
-    public function setLieu(?Lieu $lieu): static
+    public function setEmplacement(?Emplacement $emplacement): static
     {
-        $this->lieu = $lieu;
+        $this->emplacement = $emplacement;
         return $this;
     }
 

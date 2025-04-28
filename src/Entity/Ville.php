@@ -22,12 +22,12 @@ class Ville
     #[ORM\JoinColumn(nullable: false)]
     private ?Region $region = null;
 
-    #[ORM\OneToMany(mappedBy: 'ville', targetEntity: Lieu::class)]
-    private Collection $lieux;
+    #[ORM\OneToMany(mappedBy: 'ville', targetEntity: Emplacement::class)]
+    private Collection $emplacements;
 
     public function __construct()
     {
-        $this->lieux = new ArrayCollection();
+        $this->emplacements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -59,26 +59,26 @@ class Ville
         return $this;
     }
 
-    public function getLieux(): Collection
+    public function getEmplacements(): Collection
     {
-        return $this->lieux;
+        return $this->emplacements;
     }
 
-    public function addLieu(Lieu $lieu): static
+    public function addEmplacement(Emplacement $emplacement): static
     {
-        if (!$this->lieux->contains($lieu)) {
-            $this->lieux[] = $lieu;
-            $lieu->setVille($this);
+        if (!$this->emplacements->contains($emplacement)) {
+            $this->emplacements[] = $emplacement;
+            $emplacement->setVille($this);
         }
 
         return $this;
     }
 
-    public function removeLieu(Lieu $lieu): static
+    public function removeEmplacement(Emplacement $emplacement): static
     {
-        if ($this->lieux->removeElement($lieu)) {
-            if ($lieu->getVille() === $this) {
-                $lieu->setVille(null);
+        if ($this->emplacements->removeElement($emplacement)) {
+            if ($emplacement->getVille() === $this) {
+                $emplacement->setVille(null);
             }
         }
 

@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\LieuRepository;
+use App\Repository\EmplacementRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: LieuRepository::class)]
-class Lieu
+#[ORM\Entity(repositoryClass: EmplacementRepository::class)]
+class Emplacement
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -15,6 +15,12 @@ class Lieu
 
     #[ORM\Column(length: 255)]
     private ?string $libelle = null;
+
+    #[ORM\Column(type: 'float', nullable: false)]
+    private ?float $latitude = null;
+
+    #[ORM\Column(type: 'float', nullable: false)]
+    private ?float $longitude = null;
 
     #[ORM\ManyToOne(inversedBy: 'lieux')]
     #[ORM\JoinColumn(nullable: false)]

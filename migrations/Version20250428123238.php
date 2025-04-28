@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250418143216 extends AbstractMigration
+final class Version20250428123238 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,7 +21,7 @@ final class Version20250418143216 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE type_ph ADD libelle VARCHAR(255) NOT NULL
+            ALTER TABLE lieu ADD latitude DOUBLE PRECISION NOT NULL, ADD longitude DOUBLE PRECISION NOT NULL
         SQL);
     }
 
@@ -29,7 +29,7 @@ final class Version20250418143216 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE type_ph DROP libelle
+            ALTER TABLE lieu DROP latitude, DROP longitude
         SQL);
     }
 }
