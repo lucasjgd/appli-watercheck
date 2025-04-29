@@ -21,7 +21,7 @@ abstract class Utilisateur
     #[ORM\Column(length: 255)]
     protected ?string $nom = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     protected ?string $mail = null;
 
     #[ORM\Column(length: 255)]
