@@ -1,0 +1,83 @@
+body {
+    background-color: #f2f2f2;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: "Saira", sans-serif !important;
+}
+
+header {
+    background-color: #0e7bd0;
+}
+
+.text-blue {
+    color: #0e7bd0;
+}
+
+.text-blue:hover {
+    color: #0050a0;
+}
+
+.btn-primary {
+    background-color: #0e7bd0;
+    border-color: #0e7bd0;
+}
+
+.btn-primary:hover {
+    background-color: #0050a0;
+    border-color: #0050a0;
+}
+
+.content {
+    flex: 1;
+}
+
+.potable {
+    color: green;
+}
+
+.moyennement-potable {
+    color: orange;
+}
+
+.non-potable {
+    color: red;
+}
+
+.rond-vert {
+    background-color: green;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 2px solid black;
+}
+.rond-orange {
+    background-color: orange;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 2px solid black;
+}
+.rond-rouge {
+    background-color: red;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 2px solid black;
+}
+
+#map {
+    height: 500px;
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+    background-color: #0e7bd0;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    width: 100%;
+}

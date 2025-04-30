@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil
+{% endblock %}
+
+{% block body %}
+
+	<main class="container d-flex align-items-center justify-content-around m-4 content">
+        <img src="{{ asset('images/logo.png') }}" alt="Logo WaterCheck" class="me-4 h-auto">
+        <div class = "align-items-center d-flex flex-column">
+            <h2>Bienvenue sur WaterCheck !</h2>
+            <p>Application de gestion de prélèvement d'eau.</p>
+            <a href="prelevement.html" class="btn btn-primary">Voir les prélèvements</a>
+        </div>
+    </main>
+
+{% endblock %}
