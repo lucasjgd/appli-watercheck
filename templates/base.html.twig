@@ -35,29 +35,49 @@
 						<li class="nav-item">
 							<a class="nav-link text-white" href="{{ path('carte') }}">Carte des prélèvements</a>
 						</li>
-						<li class="nav-item dropdown">
-							<a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								Gestion
-							</a>
-							<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-								<li>
-									<a class="dropdown-item" href="gestion-prelevement.html">Gestion des prélèvements</a>
+
+						{% if app.session.get('utilisateur') %}
+							{% set role = app.session.get('utilisateur').role|lower %}
+
+							{% if role == 'client' %}
+								<li class="nav-item">
+									<a class="nav-link text-white" href="{{ path('deconnexion') }}">
+										Déconnexion ({{ app.session.get('utilisateur').nom }})
+									</a>
 								</li>
-								<li>
-									<a class="dropdown-item" href="gestion-type-ph.html">Gestion des types de pH</a>
+							{% else %}
+								<li class="nav-item dropdown">
+									<a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+										Gestion
+									</a>
+									<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+										<li>
+											<a class="dropdown-item" href="#">Gestion des prélèvements</a>
+										</li>
+										<li>
+											<a class="dropdown-item" href="">Gestion des types de pH</a>
+										</li>
+										<li>
+											<a class="dropdown-item" href="">Gestion des emplacements</a>
+										</li>
+										<li>
+											<a class="dropdown-item" href="">Gestion des utilisateurs</a>
+										</li>
+									</ul>
 								</li>
-								<li>
-									<a class="dropdown-item" href="gestion-lieux.html">Gestion des emplacements</a>
+								<li class="nav-item">
+									<a class="nav-link text-white" href="{{ path('deconnexion') }}">
+										Déconnexion ({{ app.session.get('utilisateur').nom }})
+									</a>
 								</li>
-								<li>
-									<a class="dropdown-item" href="gestion-user.html">Gestion des utilisateurs</a>
-								</li>
-							</ul>
-						</li>
-						<li class="nav-item">
-							<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2" href="{{ path('connexion') }}"><i class="fa-solid fa-user"></i>
-							</a>
-						</li>
+							{% endif %}
+						{% else %}
+							<li class="nav-item">
+								<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2" href="{{ path('connexion') }}">
+									<i class="fa-solid fa-user"></i>
+								</a>
+							</li>
+						{% endif %}
 					</ul>
 				</nav>
 			</div>

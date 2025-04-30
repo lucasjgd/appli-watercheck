@@ -3,15 +3,19 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+
 
 #[ORM\Entity]
 #[ORM\InheritanceType("SINGLE_TABLE")]
 #[ORM\DiscriminatorColumn(name: "role", type: "string")]
 #[ORM\DiscriminatorMap([
     "preleveur" => Preleveur::class,
-    "analyseur" => Analyseur::class
+    "analyseur" => Analyseur::class,
+    "client" => Client::class
+
 ])]
-abstract class Utilisateur
+class Utilisateur implements PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -59,9 +63,20 @@ abstract class Utilisateur
         return $this->mdp;
     }
 
+    public function getPassword(): ?string
+    {
+        return $this->mdp; 
+    }
+
     public function setMdp(string $mdp): static
     {
         $this->mdp = $mdp;
+        return $this;
+    }
+
+    public function setRole(string $role): static
+    {
+        $this->role = $role;
         return $this;
     }
 }
