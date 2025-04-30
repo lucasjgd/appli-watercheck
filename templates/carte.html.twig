@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Carte des prélèvements{% endblock %}
+
+{% block body %}
+<main class="container content my-5">
+    <h2 class="mb-4">Carte des Prélèvements</h2>
+    <div class="d-flex gap-5 align-items-center">
+        <div class="d-flex flex-column gap-2 w-25">
+            <div class="d-flex gap-1 align-items-center"><div class="rond-vert"></div><p class="mb-0">Eau potable</p></div>
+            <div class="d-flex gap-1 align-items-center"><div class="rond-orange"></div><p class="mb-0">Eau moyennement-potable</p></div>
+            <div class="d-flex gap-1 align-items-center"><div class="rond-rouge"></div><p class="mb-0">Eau non potable</p></div>
+        </div>
+        {% component 'MapPrelevement' with {
+            prelevements: [
+                {
+                    lieu: "Lac Bleu",
+                    ville: "Marseille",
+                    coord: [43.2965, 5.3698],
+                    date: "01/04/2025",
+                    etat: "Potable"
+                },
+                {
+                    lieu: "Rivière Verte",
+                    ville: "Lyon",
+                    coord: [45.75, 4.85],
+                    date: "25/03/2025",
+                    etat: "Moyennement potable"
+                },
+                {
+                    lieu: "Étang Noir",
+                    ville: "Toulouse",
+                    coord: [43.6047, 1.4442],
+                    date: "15/03/2025",
+                    etat: "Non potable"
+                }
+            ]
+        } %}
+        {% endcomponent %}
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Les prélèvements
+{% endblock %}
+
+{% block body %}
+
+	<main class="container my-5 content">
+        <h2 class="text-start mb-4">Les prélèvements effectués</h2>
+        
+        <form class="mb-4 d-flex align-items-center gap-3">
+            <label for="filtre-ville" class="form-label m-0">Filtrer :</label>
+            <select id="filtre-ville" class="form-select w-auto">
+                <option value="">Sélectionnez une ville</option>
+                <option value="Marseille">Marseille</option>
+                <option value="Lyon">Lyon</option>
+                <option value="Toulouse">Toulouse</option>
+            </select>
+            
+            <select id="filtre-region" class="form-select w-auto">
+                <option value="">Sélectionnez une région</option>
+                <option value="Provence-Alpes-Côte d'Azur">Provence-Alpes-Côte d'Azur</option>
+                <option value="Auvergne-Rhône-Alpes">Auvergne-Rhône-Alpes</option>
+                <option value="Occitanie">Occitanie</option>
+            </select>
+            
+            <select id="filtre-region" class="form-select w-auto">
+                <option value="">Eau potable ?</option>
+                <option value="Oui">Oui</option>
+                <option value="Moyennement">Moyennement</option>
+                <option value="Non">Non</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Appliquer</button>
+        </form>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card p-3 mb-3">
+                    <h5 class="card-title">Emplacement : Lac Bleu</h5>
+                    <p class="card-text mt-0 mb-0">Ville : Marseille</p>
+                    <p class="card-text mt-0 mb-0">Région : Provence-Alpes-Côte d'Azur</p>
+                    <p class="card-text mt-0 mb-0">Date : 01/04/2025</p>
+                    <p class="card-text potable">Eau : Potable</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3 mb-3">
+                    <h5 class="card-title">Emplacement : Rivière Verte</h5>
+                    <p class="card-text mt-0 mb-0">Ville : Lyon</p>
+                    <p class="card-text mt-0 mb-0">Région : Auvergne-Rhône-Alpes</p>
+                    <p class="card-text mt-0 mb-0">Date : 25/03/2025</p>
+                    <p class="card-text moyennement-potable">Eau : Moyennement potable</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3 mb-3">
+                    <h5 class="card-title">Emplacement : Étang Noir</h5>
+                    <p class="card-text mt-0 mb-0">Ville : Toulouse</p>
+                    <p class="card-text mt-0 mb-0">Région : Occitanie</p>
+                    <p class="card-text mt-0 mb-0">Date : 15/03/2025</p>
+                    <p class="card-text non-potable">Eau : Non potable</p>
+                </div>
+            </div>
+    </main>
+
+{% endblock %}
