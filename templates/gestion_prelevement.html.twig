@@ -1,0 +1,137 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des prélèvements
+{% endblock %}
+
+{% block body %}
+
+	<main class="m-5 content">
+		<h1 class="mb-4 text-center">Gestion des Prélèvements</h1>
+
+		<!-- Bouton d'ajout -->
+		<div class="d-flex justify-content-end mb-3">
+			<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPrelevementModal">Ajouter un prélèvement</button>
+		</div>
+
+		<!-- Tableau -->
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Emplacement</th>
+					<th>Conductivité</th>
+					<th>Turbidité</th>
+					<th>Alcalinité</th>
+					<th>Dureté</th>
+					<th>Type de pH</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- Exemple de prélèvement NON analysé -->
+				<tr>
+					<td>2025-04-07</td>
+					<td>Lac Bleu</td>
+					<td>-</td>
+					<td>-</td>
+					<td>-</td>
+					<td>-</td>
+					<td>-</td>
+					<td>
+						<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#analyserModal">Analyser</button>
+						<button class="btn btn-danger btn-sm">Supprimer</button>
+					</td>
+				</tr>
+				<!-- Exemple de prélèvement ANALYSÉ -->
+				<tr>
+					<td>2025-04-06</td>
+					<td>Rivière Claire</td>
+					<td>300</td>
+					<td>1.4</td>
+					<td>10</td>
+					<td>18</td>
+					<td>pH Neutre</td>
+					<td>
+						<button class="btn btn-danger btn-sm">Supprimer</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</main>
+
+	<!-- Modal : Ajout Prélèvement (préleveur) -->
+	<div class="modal fade" id="addPrelevementModal" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form>
+					<div class="modal-header">
+						<h5 class="modal-title">Ajouter un prélèvement</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+					<div class="modal-body">
+						<div class="mb-3">
+							<label for="lieu" class="form-label">Emplacement</label>
+							<select class="form-select" id="lieu" required>
+								<option disabled selected>Choisir un emplacement</option>
+								<option value="lac-bleu">Lac Bleu</option>
+								<option value="riviere-claire">Rivière Claire</option>
+								<option value="source-verte">Source Verte</option>
+							</select>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary">Ajouter</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal : Analyse prélèvement -->
+	<div class="modal fade" id="analyserModal" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form>
+					<div class="modal-header">
+						<h5 class="modal-title">Analyser le prélèvement</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+					<div class="modal-body">
+						<div class="mb-3">
+							<label for="conductivite" class="form-label">Conductivité (µS/cm)</label>
+							<input type="number" class="form-control" id="conductivite" required>
+						</div>
+						<div class="mb-3">
+							<label for="turbidite" class="form-label">Turbidité (FNU)</label>
+							<input type="number" class="form-control" id="turbidite" required>
+						</div>
+						<div class="mb-3">
+							<label for="alcalinite" class="form-label">Alcalinité (°F)</label>
+							<input type="number" class="form-control" id="alcalinite" required>
+						</div>
+						<div class="mb-3">
+							<label for="durete" class="form-label">Dureté (°F)</label>
+							<input type="number" class="form-control" id="durete" required>
+						</div>
+						<div class="mb-3">
+							<label for="typePh" class="form-label">Type de pH</label>
+							<select class="form-select" id="typePh" required>
+								<option disabled selected>Choisir un type de pH</option>
+								<option value="acide">pH Acide</option>
+								<option value="neutre">pH Neutre</option>
+								<option value="basique">pH Basique</option>
+							</select>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-success">Analyser</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+{% endblock %}

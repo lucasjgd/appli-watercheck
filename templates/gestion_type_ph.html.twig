@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestions des types de pH
+{% endblock %}
+
+{% block body %}
+
+	<main class="m-5 content">
+		<div>
+			<h1 class="mb-4 text-center">Gestion des Types de pH</h1>
+
+			<div class="d-flex justify-content-end mb-3">
+				<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTypeModal">Ajouter un type de
+										                    pH</button>
+			</div>
+
+			<table class="table table-bordered table-hover">
+				<thead>
+					<tr>
+						<th>Libellé</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for type in types %}
+						<tr>
+							<td>{{ type.libelle }}</td>
+							<td>
+								<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifTypeModal" data-id="{{ type.id }}" data-libelle="{{ type.libelle }}">
+									Modifier
+								</button>
+
+								<form class="btn-suppr-emplacement" method="POST" action="{{ path('gestion_type_ph_suppr', { id: type.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce type ?');">
+									<button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+								</form>
+							</td>
+						</tr>
+					{% else %}
+						<tr>
+							<td colspan="4" class="text-center">Aucun types trouvé.</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+		<div class="modal fade" id="addTypeModal" tabindex="-1" aria-labelledby="addTypeModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<form action="{{ path('gestion_type_ph_ajout') }}" method="POST">
+						<div class="modal-header">
+							<h5 class="modal-title" id="addTypeModalLabel">Ajouter un type de pH</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+						</div>
+						<div class="modal-body">
+							<div class="mb-3">
+								<label for="libelle" class="form-label">Libellé</label>
+								<input type="text" class="form-control" id="nomType" name="nomType" required>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary">Ajouter</button>
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="modifTypeModal" tabindex="-1" aria-labelledby="modifTypeModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<form id="modifTypeForm" method="POST">
+						<div class="modal-header">
+							<h5 class="modal-title" id="modifTypeModalLabel">Modifier un type de pH</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+						</div>
+						<div class="modal-body">
+							<div class="mb-3">
+								<label for="modifNomType" class="form-label">Libellé</label>
+								<input type="text" class="form-control" id="modifNomType" name="nomType" required>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary">Modifier</button>
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+const modifModal = document.getElementById('modifTypeModal');
+modifModal.addEventListener('show.bs.modal', function (event) {
+const button = event.relatedTarget;
+const id = button.getAttribute('data-id');
+const libelle = button.getAttribute('data-libelle');
+
+const inputLibelle = document.getElementById('modifNomType');
+inputLibelle.value = libelle;
+
+const form = document.getElementById('modifTypeForm');
+form.action = `/gestion_type_ph/modif/${id}`;
+});
+});
+	</script>
+
+
+{% endblock %}

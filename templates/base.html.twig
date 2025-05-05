@@ -52,22 +52,22 @@
 									</a>
 									<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
 										<li>
-											<a class="dropdown-item" href="#">Gestion des prélèvements</a>
+											<a class="dropdown-item" href="{{ path('gestion_prelevement') }}">Gestion des prélèvements</a>
 										</li>
 										<li>
-											<a class="dropdown-item" href="">Gestion des types de pH</a>
+											<a class="dropdown-item" href="{{ path('gestion_type_ph') }}">Gestion des types de pH</a>
 										</li>
 										<li>
-											<a class="dropdown-item" href="">Gestion des emplacements</a>
+											<a class="dropdown-item" href="{{ path('gestion_emplacement') }}">Gestion des emplacements</a>
 										</li>
 										<li>
-											<a class="dropdown-item" href="">Gestion des utilisateurs</a>
+											<a class="dropdown-item" href="{{ path('gestion_utilisateur') }}">Gestion des utilisateurs</a>
 										</li>
 									</ul>
 								</li>
 								<li class="nav-item">
-									<a class="nav-link text-white" href="{{ path('deconnexion') }}">
-										Déconnexion ({{ app.session.get('utilisateur').nom }})
+									<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2" href="{{ path('deconnexion') }}">{{ app.session.get('utilisateur').nom }}
+									<i class="fa-solid fa-right-from-bracket"></i>
 									</a>
 								</li>
 							{% endif %}

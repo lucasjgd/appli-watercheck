@@ -73,6 +73,10 @@ header {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.btn-suppr-emplacement {
+    display: inline;
+}
+
 footer {
     background-color: #0e7bd0;
     color: white;

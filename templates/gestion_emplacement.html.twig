@@ -1,0 +1,161 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des emplacements
+{% endblock %}
+
+{% block body %}
+
+	<main class="m-5 content">
+		<div>
+			<h1 class="mb-4 text-center">Gestion des emplacements</h1>
+
+			<!-- Bouton pour ajouter un lieu -->
+			<div class="d-flex justify-content-end mb-3">
+				<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLieuModal">Ajouter un emplacement</button>
+			</div>
+
+			<table class="table table-bordered table-hover">
+				<thead>
+					<tr>
+						<th>Nom</th>
+						<th>Latitude</th>
+						<th>Longitude</th>
+						<th>Ville</th>
+						<th>Région</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for emplacement in emplacements %}
+						<tr>
+							<td>{{ emplacement.libelle }}</td>
+							<td>{{ emplacement.latitude }}</td>
+							<td>{{ emplacement.longitude }}</td>
+							<td>{{ emplacement.ville.libelle }}</td>
+							<td>{{ emplacement.ville.region.libelle }}</td>
+							<td>
+								<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifLieuModal" data-id="{{ emplacement.id }}" data-libelle="{{ emplacement.libelle }}" data-latitude="{{ emplacement.latitude }}" data-longitude="{{ emplacement.longitude }}" data-ville="{{ emplacement.ville.id }}">
+									Modifier
+								</button>
+
+								<form class = "btn-suppr-emplacement" method="POST" action="{{ path('gestion_emplacement_suppr', { id: emplacement.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet emplacement ?');">
+									<button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+								</form>
+							</td>
+						</tr>
+					{% else %}
+						<tr>
+							<td colspan="4" class="text-center">Aucun emplacement trouvé.</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+
+		<div class="modal fade" id="addLieuModal" tabindex="-1" aria-labelledby="addLieuModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<form action="{{ path('gestion_emplacement_ajout') }}" method="POST">
+						<div class="modal-header">
+							<h5 class="modal-title">Ajouter un emplacement</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+						</div>
+						<div class="modal-body">
+							<div class="mb-3">
+								<label for="latitude" class="form-label">Latitude</label>
+								<input type="number" step="any" class="form-control" id="latitude" name="latitude" required>
+							</div>
+							<div class="mb-3">
+								<label for="longitude" class="form-label">Longitude</label>
+								<input type="number" step="any" class="form-control" id="longitude" name="longitude" required>
+							</div>
+							<div class="mb-3">
+								<label for="nomLieu" class="form-label">Nom</label>
+								<input type="text" class="form-control" id="nomLieu" name="nomLieu" required>
+							</div>
+							<div class="mb-3">
+								<label for="villeLieu" class="form-label">Ville</label>
+								<select class="form-select" id="villeLieu" name="villeLieu" required>
+									<option value="" disabled selected>Choisir une ville</option>
+									{% for ville in villes %}
+										<option value="{{ ville.id }}">{{ ville.libelle }}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary">Ajouter</button>
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="modifLieuModal" tabindex="-1" aria-labelledby="modifLieuModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<form id="modifLieuForm" method="POST">
+						<div class="modal-header">
+							<h5 class="modal-title">Modifier un emplacement</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+						</div>
+						<div class="modal-body">
+							<input type="hidden" id="modifId" name="id">
+							<div class="mb-3">
+								<label for="modifLatitude" class="form-label">Latitude</label>
+								<input type="number" step="any" class="form-control" id="modifLatitude" name="latitude" required>
+							</div>
+							<div class="mb-3">
+								<label for="modifLongitude" class="form-label">Longitude</label>
+								<input type="number" step="any" class="form-control" id="modifLongitude" name="longitude" required>
+							</div>
+							<div class="mb-3">
+								<label for="modifNomLieu" class="form-label">Nom</label>
+								<input type="text" class="form-control" id="modifNomLieu" name="nomLieu" required>
+							</div>
+							<div class="mb-3">
+								<label for="modifVilleLieu" class="form-label">Ville</label>
+								<select class="form-select" id="modifVilleLieu" name="villeLieu" required>
+									<option value="" disabled>Choisir une ville</option>
+									{% for ville in villes %}
+										<option value="{{ ville.id }}">{{ ville.libelle }}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary">Modifier</button>
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+const modifModal = document.getElementById('modifLieuModal');
+modifModal.addEventListener('show.bs.modal', function (event) {
+const button = event.relatedTarget;
+
+const id = button.getAttribute('data-id');
+const libelle = button.getAttribute('data-libelle');
+const latitude = button.getAttribute('data-latitude');
+const longitude = button.getAttribute('data-longitude');
+const ville = button.getAttribute('data-ville');
+
+const form = modifModal.querySelector('form');
+form.action = `/gestion_emplacement/modif/${id}`;
+
+document.getElementById('modifNomLieu').value = libelle;
+document.getElementById('modifLatitude').value = latitude;
+document.getElementById('modifLongitude').value = longitude;
+document.getElementById('modifVilleLieu').value = ville;
+});
+});
+	</script>
+
+
+{% endblock %}
