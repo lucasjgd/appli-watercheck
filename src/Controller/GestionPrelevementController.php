@@ -11,8 +11,6 @@ final class GestionPrelevementController extends AbstractController
     #[Route('/gestion_prelevement', name: 'gestion_prelevement')]
     public function index(): Response
     {
-        return $this->render('gestion_prelevement.html.twig', [
-            'controller_name' => 'GestionPrelevementController',
-        ]);
+        return $this->render('gestion_prelevement.html.twig');
     }
 }

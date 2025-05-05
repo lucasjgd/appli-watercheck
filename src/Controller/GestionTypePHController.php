@@ -22,7 +22,7 @@ final class GestionTypePHController extends AbstractController
     }
 
     #[Route('/gestion_type_ph/ajout', name: 'gestion_type_ph_ajout', methods: ['POST'])]
-    public function addType(Request $request, EntityManagerInterface $entityManager): Response
+    public function ajoutType(Request $request, EntityManagerInterface $entityManager): Response
     {
         $nomType = $request->request->get('nomType');
 

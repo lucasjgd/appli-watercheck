@@ -11,8 +11,6 @@ final class CarteController extends AbstractController
     #[Route('/carte', name: 'carte')]
     public function index(): Response
     {
-        return $this->render('carte.html.twig', [
-            'controller_name' => 'CarteController',
-        ]);
+        return $this->render('carte.html.twig');
     }
 }

@@ -12,8 +12,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[ORM\DiscriminatorMap([
     "preleveur" => Preleveur::class,
     "analyseur" => Analyseur::class,
-    "client" => Client::class
-
+    "client" => Client::class,
+    "admin" => Admin::class
 ])]
 class Utilisateur implements PasswordAuthenticatedUserInterface
 {
@@ -52,6 +52,11 @@ class Utilisateur implements PasswordAuthenticatedUserInterface
         return $this->mail;
     }
 
+    public function getRole(): string
+    {
+        return strtolower((new \ReflectionClass($this))->getShortName());
+    }
+
     public function setMail(string $mail): static
     {
         $this->mail = $mail;
@@ -65,7 +70,7 @@ class Utilisateur implements PasswordAuthenticatedUserInterface
 
     public function getPassword(): ?string
     {
-        return $this->mdp; 
+        return $this->mdp;
     }
 
     public function setMdp(string $mdp): static

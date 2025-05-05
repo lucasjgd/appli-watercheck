@@ -26,7 +26,7 @@ final class GestionEmplacementController extends AbstractController
 
 
     #[Route('/gestion_emplacement/ajout', name: 'gestion_emplacement_ajout', methods: ['POST'])]
-    public function addEmplacement(Request $request, EntityManagerInterface $entityManager): Response
+    public function ajoutEmplacement(Request $request, EntityManagerInterface $entityManager): Response
     {
         $nomLieu = $request->request->get('nomLieu');
         $latitude = $request->request->get('latitude');

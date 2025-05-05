@@ -5,6 +5,16 @@
 
 {% block body %}
 
+	{% for label, messages in app.flashes %}
+		<div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show m-2" role="alert">
+			{% for message in messages %}
+				{{ message }}
+			{% endfor %}
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	{% endfor %}
+
+
 	<main class="container my-5 content">
 		<div class="row justify-content-center">
 			<div class="col-md-6">

@@ -33,13 +33,13 @@ class ConnexionController extends AbstractController
         $utilisateur = $em->getRepository(Utilisateur::class)->findOneBy(['mail' => $email]);
 
         if (!$utilisateur) {
-            $this->addFlash('danger', 'Identifiants invalides');
+            $this->addFlash('danger', 'Mail invalide.');
             return $this->redirectToRoute('connexion');
         }
         
 
         if (!$passwordHasher->isPasswordValid($utilisateur, $mdp)) {
-            $this->addFlash('danger', 'Identifiants invalides');
+            $this->addFlash('danger', 'Mot de passe invalide');
             return $this->redirectToRoute('connexion');
         }
         

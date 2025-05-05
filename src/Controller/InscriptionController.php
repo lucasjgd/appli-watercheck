@@ -8,10 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class InscriptionController extends AbstractController
+class InscriptionController extends AbstractController
 {
     #[Route('/traitement-inscription', name: 'traitement-inscription')]
-    public function index(Request $request, EntityManagerInterface $em): Response
+    public function traitementInscription(Request $request, EntityManagerInterface $em): Response
     {
         $utilisateur = new Client();
 
@@ -23,7 +23,13 @@ final class InscriptionController extends AbstractController
 
             if ($mdp !== $confirmMdp) {
                 $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
-                return $this->redirectToRoute('inscription');
+                return $this->redirectToRoute('connexion');
+            }
+
+            $verif = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{12,}$/';
+            if (!preg_match($verif, $mdp)) {
+                $this->addFlash('error', 'Le mot de passe doit contenir au minimum 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.');
+                return $this->redirectToRoute('connexion');
             }
 
             $utilisateur->setNom($nom)
