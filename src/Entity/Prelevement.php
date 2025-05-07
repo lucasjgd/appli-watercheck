@@ -14,7 +14,7 @@ class Prelevement
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'date')]
     private ?DateTimeInterface $datePrelevement = null;
 
     #[ORM\Column(type: 'float', nullable: true)]
@@ -34,18 +34,18 @@ class Prelevement
     #[ORM\JoinColumn(nullable: false)]
     private ?Emplacement $emplacement = null;
 
-    #[ORM\ManyToOne(targetEntity: Preleveur::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Preleveur $preleveur = null;
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\JoinColumn(nullable: false)]  
+    private ?Utilisateur $preleveur = null;
 
-    #[ORM\ManyToOne(targetEntity: Analyseur::class)]
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
     #[ORM\JoinColumn(nullable: true)]
-    private ?Analyseur $analyseur = null;
+    private ?Utilisateur $analyseur = null;
 
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: true)]
-    private ?TypePh $typePh = null;
+    private ?TypePH $typePh = null;
 
 
     public function getId(): ?int
@@ -64,17 +64,6 @@ class Prelevement
         return $this;
     }
 
-    public function getValeurPh(): ?float
-    {
-        return $this->valeurPh;
-    }
-
-    public function setValeurPh(?float $valeurPh): static
-    {
-        $this->valeurPh = $valeurPh;
-        return $this;
-    }
-
     public function getEmplacement(): ?Emplacement
     {
         return $this->emplacement;
@@ -86,36 +75,80 @@ class Prelevement
         return $this;
     }
 
-    public function getPreleveur(): ?Preleveur
+    public function getPreleveur(): ?Utilisateur
     {
         return $this->preleveur;
     }
 
-    public function setPreleveur(?Preleveur $preleveur): static
+    public function setPreleveur(?Utilisateur $preleveur): static
     {
         $this->preleveur = $preleveur;
         return $this;
     }
 
-    public function getAnalyseur(): ?Analyseur
+    public function getAnalyseur(): ?Utilisateur
     {
         return $this->analyseur;
     }
 
-    public function setAnalyseur(?Analyseur $analyseur): static
+    public function setAnalyseur(?Utilisateur $analyseur): static
     {
         $this->analyseur = $analyseur;
         return $this;
     }
 
-    public function getTypePh(): ?TypePh
+    public function getTypePh(): ?TypePH
     {
         return $this->typePh;
     }
 
-    public function setTypePh(?TypePh $typePh): static
+    public function setTypePh(?TypePH $typePh): static
     {
         $this->typePh = $typePh;
+        return $this;
+    }
+
+    public function getConductivite(): ?float
+    {
+        return $this->conductivite;
+    }
+
+    public function setConductivite(?float $conductivite): static
+    {
+        $this->conductivite = $conductivite;
+        return $this;
+    }
+
+    public function getTurbidite(): ?float
+    {
+        return $this->turbidite;
+    }
+
+    public function setTurbidite(?float $turbidite): static
+    {
+        $this->turbidite = $turbidite;
+        return $this;
+    }
+
+    public function getAlcalinite(): ?float
+    {
+        return $this->alcalinite;
+    }
+
+    public function setAlcalinite(?float $alcalinite): static
+    {
+        $this->alcalinite = $alcalinite;
+        return $this;
+    }
+
+    public function getDurete(): ?float
+    {
+        return $this->durete;
+    }
+
+    public function setDurete(?float $durete): static
+    {
+        $this->durete = $durete;
         return $this;
     }
 }

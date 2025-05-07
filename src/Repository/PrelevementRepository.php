@@ -16,28 +16,17 @@ class PrelevementRepository extends ServiceEntityRepository
         parent::__construct($registry, Prelevement::class);
     }
 
-    //    /**
-    //     * @return Prelevement[] Returns an array of Prelevement objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function estAnalyse(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.conductivite IS NOT NULL')
+            ->andWhere('p.turbidite IS NOT NULL')
+            ->andWhere('p.alcalinite IS NOT NULL')
+            ->andWhere('p.durete IS NOT NULL')
+            ->andWhere('p.typePh IS NOT NULL')
+            ->orderBy('p.datePrelevement', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Prelevement
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }

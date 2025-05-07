@@ -6,60 +6,139 @@
 {% block body %}
 
 	<main class="container my-5 content">
-        <h2 class="text-start mb-4">Les prélèvements effectués</h2>
-        
-        <form class="mb-4 d-flex align-items-center gap-3">
-            <label for="filtre-ville" class="form-label m-0">Filtrer :</label>
-            <select id="filtre-ville" class="form-select w-auto">
-                <option value="">Sélectionnez une ville</option>
-                <option value="Marseille">Marseille</option>
-                <option value="Lyon">Lyon</option>
-                <option value="Toulouse">Toulouse</option>
-            </select>
-            
-            <select id="filtre-region" class="form-select w-auto">
-                <option value="">Sélectionnez une région</option>
-                <option value="Provence-Alpes-Côte d'Azur">Provence-Alpes-Côte d'Azur</option>
-                <option value="Auvergne-Rhône-Alpes">Auvergne-Rhône-Alpes</option>
-                <option value="Occitanie">Occitanie</option>
-            </select>
-            
-            <select id="filtre-region" class="form-select w-auto">
-                <option value="">Eau potable ?</option>
-                <option value="Oui">Oui</option>
-                <option value="Moyennement">Moyennement</option>
-                <option value="Non">Non</option>
-            </select>
-            <button type="submit" class="btn btn-primary">Appliquer</button>
-        </form>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card p-3 mb-3">
-                    <h5 class="card-title">Emplacement : Lac Bleu</h5>
-                    <p class="card-text mt-0 mb-0">Ville : Marseille</p>
-                    <p class="card-text mt-0 mb-0">Région : Provence-Alpes-Côte d'Azur</p>
-                    <p class="card-text mt-0 mb-0">Date : 01/04/2025</p>
-                    <p class="card-text potable">Eau : Potable</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card p-3 mb-3">
-                    <h5 class="card-title">Emplacement : Rivière Verte</h5>
-                    <p class="card-text mt-0 mb-0">Ville : Lyon</p>
-                    <p class="card-text mt-0 mb-0">Région : Auvergne-Rhône-Alpes</p>
-                    <p class="card-text mt-0 mb-0">Date : 25/03/2025</p>
-                    <p class="card-text moyennement-potable">Eau : Moyennement potable</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card p-3 mb-3">
-                    <h5 class="card-title">Emplacement : Étang Noir</h5>
-                    <p class="card-text mt-0 mb-0">Ville : Toulouse</p>
-                    <p class="card-text mt-0 mb-0">Région : Occitanie</p>
-                    <p class="card-text mt-0 mb-0">Date : 15/03/2025</p>
-                    <p class="card-text non-potable">Eau : Non potable</p>
-                </div>
-            </div>
-    </main>
+		<h2 class="text-start mb-4">Les prélèvements effectués</h2>
+
+		<form id="formulaire-filtre" class="mb-4 d-flex align-items-center gap-3">
+			<label for="filtre-ville" class="form-label m-0">Filtrer :</label>
+
+			<select id="filtre-ville" class="form-select w-auto">
+				<option value="">Sélectionnez une ville</option>
+				{% for ville in villes %}
+					<option value="{{ ville.libelle }}">{{ ville.libelle }}</option>
+				{% endfor %}
+			</select>
+
+			<select id="filtre-region" class="form-select w-auto">
+				<option value="">Sélectionnez une région</option>
+				{% for region in regions %}
+					<option value="{{ region.libelle }}">{{ region.libelle }}</option>
+				{% endfor %}
+			</select>
+
+			<select id="filtre-qualite" class="form-select w-auto">
+				<option value="">Eau potable ?</option>
+				<option value="potable">Oui</option>
+				<option value="moyennement-potable">Moyennement</option>
+				<option value="non-potable">Non</option>
+			</select>
+
+			<button type="button" id="bouton-filtrer" class="btn btn-primary">Filtrer</button>
+		</form>
+
+
+		<div class="row">
+			{% for prelevement in prelevements %}
+				{% set bonneConductivite = prelevement.conductivite < 1000 %}
+				{% set bonneTurbidite = prelevement.turbidite < 5 %}
+				{% set bonneAlcalinite = prelevement.alcalinite >= 5 and prelevement.alcalinite <= 30 %}
+				{% set bonneDurete = prelevement.durete >= 10 and prelevement.durete <= 25 %}
+				{% set verifPh = prelevement.typePh.libelle|lower|replace({'ph ': ''}) %}
+				{% set bonPh = verifPh in ['neutre', 'basique'] %}
+
+				{% set criteresOk = 0 %}
+				{% if bonneConductivite %}
+					{% set criteresOk = criteresOk + 1 %}
+				{% endif %}
+				{% if bonneTurbidite %}
+					{% set criteresOk = criteresOk + 1 %}
+				{% endif %}
+				{% if bonneAlcalinite %}
+					{% set criteresOk = criteresOk + 1 %}
+				{% endif %}
+				{% if bonneDurete %}
+					{% set criteresOk = criteresOk + 1 %}
+				{% endif %}
+				{% if bonPh %}
+					{% set criteresOk = criteresOk + 1 %}
+				{% endif %}
+
+				{% if criteresOk == 5 %}
+					{% set qualiteEau = 'potable' %}
+					{% set classeEau = 'potable' %}
+				{% elseif criteresOk >= 3 %}
+					{% set qualiteEau = 'moyennement potable' %}
+					{% set classeEau = 'moyennement-potable' %}
+				{% else %}
+					{% set qualiteEau = 'non potable' %}
+					{% set classeEau = 'non-potable' %}
+				{% endif %}
+
+				<div class="col-md-4 prelevement-card" data-ville="{{ prelevement.emplacement.ville.libelle }}" data-region="{{ prelevement.emplacement.ville.region.libelle }}" data-qualite="{{ classeEau }}">
+					<div class="card p-3 mb-3">
+						<h5 class="card-title">Emplacement :
+							{{ prelevement.emplacement.libelle }}</h5>
+						<p class="card-text mt-0 mb-0">Ville :
+							{{ prelevement.emplacement.ville.libelle }}</p>
+						<p class="card-text mt-0 mb-0">Région :
+							{{ prelevement.emplacement.ville.region.libelle }}</p>
+						<p class="card-text mt-0 mb-0">Date :
+							{{ prelevement.datePrelevement|date('d/m/Y') }}</p>
+						<p class="card-text {{ classeEau }}">Eau :
+							{{ qualiteEau }}</p>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+
+		<p id="message-aucun-resultat" class="text-center mt-5 recherche ">
+			Aucun résultat ne correspond à votre recherche.
+		</p>
+	</main>
+
+	<script>
+document.addEventListener("DOMContentLoaded", function () {
+	const champVille = document.getElementById("filtre-ville");
+	const champRegion = document.getElementById("filtre-region");
+	const champQualite = document.getElementById("filtre-qualite");
+	const boutonFiltrer = document.getElementById("bouton-filtrer");
+	const cartes = document.querySelectorAll(".prelevement-card");
+	const messageAucunResultat = document.getElementById("message-aucun-resultat");
+
+	function filtrerCartes() {
+		const ville = champVille.value.trim().toLowerCase();
+		const region = champRegion.value.trim().toLowerCase();
+		const qualite = champQualite.value.trim().toLowerCase();
+
+		let cartesVisibles = 0;
+
+		cartes.forEach(carte => {
+			const villeCarte = carte.dataset.ville.trim().toLowerCase();
+			const regionCarte = carte.dataset.region.trim().toLowerCase();
+			const qualiteCarte = carte.dataset.qualite.trim().toLowerCase();
+
+			const villeOK = !ville || villeCarte === ville;
+			const regionOK = !region || regionCarte === region;
+			const qualiteOK = !qualite || qualiteCarte === qualite;
+
+			if (villeOK && regionOK && qualiteOK) {
+				carte.style.display = "block";
+				cartesVisibles++;
+			} else {
+				carte.style.display = "none";
+			}
+		});
+
+		if (cartesVisibles === 0) {
+			messageAucunResultat.style.display = "block";
+		} else {
+			messageAucunResultat.style.display = "none";
+		}
+	}
+
+	boutonFiltrer.addEventListener("click", filtrerCartes);
+});
+</script>
+
+
 
 {% endblock %}

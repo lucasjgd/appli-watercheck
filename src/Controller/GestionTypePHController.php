@@ -53,7 +53,7 @@ final class GestionTypePHController extends AbstractController
     }
 
     #[Route('/gestion_type_ph/suppr/{id}', name: 'gestion_type_ph_suppr', methods: ['POST'])]
-    public function supprEmplacement(int $id, EntityManagerInterface $entityManager): Response
+    public function supprType(int $id, EntityManagerInterface $entityManager): Response
     {
         $type = $entityManager->getRepository(TypePH::class)->find($id);
         if (!$type) {

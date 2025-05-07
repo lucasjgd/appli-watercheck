@@ -5,12 +5,24 @@
 
 {% block body %}
 
+	{% for label, messages in app.flashes %}
+		<div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show m-2" role="alert">
+			{% for message in messages %}
+				{{ message }}
+			{% endfor %}
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	{% endfor %}
+
 	<main class="m-5 content">
 		<h1 class="mb-4 text-center">Gestion des Prélèvements</h1>
+		{% if app.session.get('utilisateur').role|lower == "preleveur" or app.session.get('utilisateur').role|lower == "admin"  %}
 
-		<div class="d-flex justify-content-end mb-3">
-			<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPrelevementModal">Ajouter un prélèvement</button>
-		</div>
+			<div class="d-flex justify-content-end mb-3">
+				<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ajoutPrelevementModal">Ajouter un prélèvement</button>
+			</div>
+
+		{% endif %}
 
 		<table class="table table-bordered table-hover">
 			<thead>
@@ -26,110 +38,357 @@
 				</tr>
 			</thead>
 			<tbody>
-				<!-- Exemple de prélèvement NON analysé -->
-				<tr>
-					<td>2025-04-07</td>
-					<td>Lac Bleu</td>
-					<td>-</td>
-					<td>-</td>
-					<td>-</td>
-					<td>-</td>
-					<td>-</td>
-					<td>
-						<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#analyserModal">Analyser</button>
-						<button class="btn btn-danger btn-sm">Supprimer</button>
-					</td>
-				</tr>
-				<!-- Exemple de prélèvement ANALYSÉ -->
-				<tr>
-					<td>2025-04-06</td>
-					<td>Rivière Claire</td>
-					<td>300</td>
-					<td>1.4</td>
-					<td>10</td>
-					<td>18</td>
-					<td>pH Neutre</td>
-					<td>
-						<button class="btn btn-danger btn-sm">Supprimer</button>
-					</td>
-				</tr>
+				{% for prelevement in prelevements %}
+					<tr>
+						<td>{{ prelevement.datePrelevement|date('d/m/Y') }}</td>
+						<td>{{ prelevement.emplacement.libelle }}</td>
+						<td>{{ prelevement.conductivite }}</td>
+						<td>{{ prelevement.turbidite }}</td>
+						<td>{{ prelevement.alcalinite }}</td>
+						<td>{{ prelevement.durete }}</td>
+						{% if prelevement.typePh is not null %}
+							<td>{{ prelevement.typePh.libelle }}</td>
+						{% else %}
+							<td></td>
+						{% endif %}
+						<td>
+							{% if prelevement.typePh and prelevement.conductivite and prelevement.turbidite and prelevement.alcalinite and prelevement.durete %}
+								<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifierPrelevementModal" data-id="{{ prelevement.id }}" data-date="{{ prelevement.datePrelevement|date('Y-m-d') }}" data-emplacementid="{{ prelevement.emplacement.id }}" data-conductivite="{{ prelevement.conductivite }}" data-turbidite="{{ prelevement.turbidite }}" data-alcalinite="{{ prelevement.alcalinite }}" data-durete="{{ prelevement.durete }}" data-typeph="{{ prelevement.typePh ? prelevement.typePh.id : '' }}">
+									Modifier
+								</button>
+							{% elseif not prelevement.typePh and not prelevement.conductivite and not prelevement.turbidite and not prelevement.alcalinite and not prelevement.durete and app.session.get('utilisateur').role|lower == "preleveur" %}
+								<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifierPrelevementNonAnalyseModal" data-idnonanalyse="{{ prelevement.id }}" data-datenonanalyse="{{ prelevement.datePrelevement|date('Y-m-d') }}" data-emplacementidnonanalyse="{{ prelevement.emplacement.id }}">
+									Modifier le prélèvement non-analysé
+								</button>
+							{% elseif not prelevement.typePh and not prelevement.conductivite and not prelevement.turbidite and not prelevement.alcalinite and not prelevement.durete and app.session.get('utilisateur').role|lower == "admin" %}
+								<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifierPrelevementNonAnalyseModal" data-idnonanalyse="{{ prelevement.id }}" data-datenonanalyse="{{ prelevement.datePrelevement|date('Y-m-d') }}" data-emplacementidnonanalyse="{{ prelevement.emplacement.id }}">
+									Modifier le prélèvement non-analysé
+								</button>
+								<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#analyserPrelevementModal" data-id="{{ prelevement.id }}">
+									Analyser
+								</button>
+							{% else %}
+								<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#analyserPrelevementModal" data-id="{{ prelevement.id }}">
+									Analyser
+								</button>
+							{% endif %}
+							{% if app.session.get('utilisateur').role|lower == "admin" %}
+								<form class="btn-suppr" method="POST" action="#" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce prélèvement ?');">
+									<button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+								</form>
+							{% endif %}
+						</td>
+					</tr>
+				</td>
 			</tbody>
-		</table>
-	</main>
-
-	<!-- Modal : Ajout Prélèvement (préleveur) -->
-	<div class="modal fade" id="addPrelevementModal" tabindex="-1" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<form>
-					<div class="modal-header">
-						<h5 class="modal-title">Ajouter un prélèvement</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-					</div>
-					<div class="modal-body">
-						<div class="mb-3">
-							<label for="lieu" class="form-label">Emplacement</label>
-							<select class="form-select" id="lieu" required>
-								<option disabled selected>Choisir un emplacement</option>
-								<option value="lac-bleu">Lac Bleu</option>
-								<option value="riviere-claire">Rivière Claire</option>
-								<option value="source-verte">Source Verte</option>
-							</select>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="submit" class="btn btn-primary">Ajouter</button>
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-					</div>
-				</form>
+		</tr>
+	{% else %}
+		<tr>
+			<td colspan="4" class="text-center">Aucun prélèvement trouvé.</td>
+		</tr>
+	{% endfor %}
+</tbody></table></main><div class="modal fade" id="ajoutPrelevementModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog">
+<div class="modal-content">
+	<form action="{{ path('gestion_prelevement_ajout') }}" method="POST">
+		<div class="modal-header">
+			<h5 class="modal-title">Ajouter un prélèvement</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+		</div>
+		<div class="modal-body">
+			<div class="mb-3">
+				<label for="lieu" class="form-label">Emplacement</label>
+				<select class="form-select" id="emplacementPrelevement" name="emplacementPrelevement" required>
+					<option value="" disabled selected>Choisir un emplacement</option>
+					{% for emplacement in emplacements %}
+						<option value="{{ emplacement.id }}">{{ emplacement.libelle }}</option>
+					{% endfor %}
+				</select>
 			</div>
 		</div>
-	</div>
-
-	<!-- Modal : Analyse prélèvement -->
-	<div class="modal fade" id="analyserModal" tabindex="-1" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<form>
-					<div class="modal-header">
-						<h5 class="modal-title">Analyser le prélèvement</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-					</div>
-					<div class="modal-body">
-						<div class="mb-3">
-							<label for="conductivite" class="form-label">Conductivité (µS/cm)</label>
-							<input type="number" class="form-control" id="conductivite" required>
-						</div>
-						<div class="mb-3">
-							<label for="turbidite" class="form-label">Turbidité (FNU)</label>
-							<input type="number" class="form-control" id="turbidite" required>
-						</div>
-						<div class="mb-3">
-							<label for="alcalinite" class="form-label">Alcalinité (°F)</label>
-							<input type="number" class="form-control" id="alcalinite" required>
-						</div>
-						<div class="mb-3">
-							<label for="durete" class="form-label">Dureté (°F)</label>
-							<input type="number" class="form-control" id="durete" required>
-						</div>
-						<div class="mb-3">
-							<label for="typePh" class="form-label">Type de pH</label>
-							<select class="form-select" id="typePh" required>
-								<option disabled selected>Choisir un type de pH</option>
-								<option value="acide">pH Acide</option>
-								<option value="neutre">pH Neutre</option>
-								<option value="basique">pH Basique</option>
-							</select>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="submit" class="btn btn-success">Analyser</button>
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-					</div>
-				</form>
+		{% if app.session.get('utilisateur') %}
+			<input type="number" class="d-none" id="preleveurPrevelement" name="preleveurPrevelement" value={{ app.session.get('utilisateur').id }} required>
+		{% endif %}
+		<div class="modal-footer">
+			<button type="submit" class="btn btn-primary">Ajouter</button>
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+		</div>
+	</form>
+</div></div></div><div class="modal fade" id="analyserPrelevementModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog">
+<div class="modal-content">
+	<form method="POST">
+		<div class="modal-header">
+			<h5 class="modal-title">Analyser le prélèvement</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+		</div>
+		<div class="modal-body">
+			<div class="mb-3">
+				<label for="conductivite" class="form-label">Conductivité (µS/cm)</label>
+				<input type="number" class="form-control" id="conductivite" name="conductivite" required>
+			</div>
+			<div class="mb-3">
+				<label for="turbidite" class="form-label">Turbidité (FNU)</label>
+				<input type="number" class="form-control" id="turbidite" name="turbidite" required>
+			</div>
+			<div class="mb-3">
+				<label for="alcalinite" class="form-label">Alcalinité (°F)</label>
+				<input type="number" class="form-control" id="alcalinite" name="alcalinite" required>
+			</div>
+			<div class="mb-3">
+				<label for="durete" class="form-label">Dureté (°F)</label>
+				<input type="number" class="form-control" id="durete" name="durete" required>
+			</div>
+			<div class="mb-3">
+				<label for="typePh" class="form-label">Type de pH</label>
+				<select class="form-select" id="typePh" name="typePh" required>
+					<option disabled selected>Choisir un type de pH</option>
+					{% for type in types %}
+						<option value="{{ type.id }}">{{ type.libelle }}</option>
+					{% endfor %}
+				</select>
 			</div>
 		</div>
-	</div>
+		{% if app.session.get('utilisateur') %}
+			<input type="number" class="d-none" id="analyseurPrevelement" name="analyseurPrevelement" value={{ app.session.get('utilisateur').id }} required>
+		{% endif %}
+		<div class="modal-footer">
+			<button type="submit" class="btn btn-primary">Analyser</button>
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+		</div>
+	</form>
+</div></div></div><div class="modal fade" id="modifierPrelevementModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog">
+<div class="modal-content">
+	<form method="POST" id="modifForm">
+		<div class="modal-header">
+			<h5 class="modal-title">Modifier le prélèvement</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+		</div>
+		<div class="modal-body">
+			{% set role = app.session.get('utilisateur').role|lower %}
+
+			{% if role == 'admin' %}
+				<div class="mb-3">
+					<label for="datePrelevement" class="form-label">Date de prélèvement</label>
+					<input type="date" class="form-control" id="modifDatePrelevement" name="modifDatePrelevement" required>
+				</div>
+				<div class="mb-3">
+					<label for="emplacement" class="form-label">Emplacement</label>
+					<select class="form-select" id="modifEmplacement" name="modifEmplacement" required>
+						<option disabled selected>Choisir un emplacement</option>
+						{% for emplacement in emplacements %}
+							<option value="{{ emplacement.id }}">{{ emplacement.libelle }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="mb-3">
+					<label for="conductivite" class="form-label">Conductivité (µS/cm)</label>
+					<input type="number" class="form-control" id="modifConductivite" name="modifConductivite" required>
+				</div>
+				<div class="mb-3">
+					<label for="turbidite" class="form-label">Turbidité (FNU)</label>
+					<input type="number" class="form-control" id="modifTurbidite" name="modifTurbidite" required>
+				</div>
+				<div class="mb-3">
+					<label for="alcalinite" class="form-label">Alcalinité (°F)</label>
+					<input type="number" class="form-control" id="modifAlcalinite" name="modifAlcalinite" required>
+				</div>
+				<div class="mb-3">
+					<label for="durete" class="form-label">Dureté (°F)</label>
+					<input type="number" class="form-control" id="modifDurete" name="modifDurete" required>
+				</div>
+				<div class="mb-3">
+					<label for="typePh" class="form-label">Type de pH</label>
+					<select class="form-select" id="modifTypePh" name="modifTypePh" required>
+						<option disabled selected>Choisir un type de pH</option>
+						{% for type in types %}
+							<option value="{{ type.id }}">{{ type.libelle }}</option>
+						{% endfor %}
+					</select>
+				</div>
+			{% endif %}
+
+			{% if role == 'preleveur' %}
+				<div class="mb-3">
+					<label for="datePrelevement" class="form-label">Date de prélèvement</label>
+					<input type="date" class="form-control" id="modifDatePrelevement" name="modifDatePrelevement" required>
+				</div>
+				<div class="mb-3">
+					<label for="emplacement" class="form-label">Emplacement</label>
+					<select class="form-select" id="modifEmplacement" name="modifEmplacement" required>
+						<option disabled selected>Choisir un emplacement</option>
+						{% for emplacement in emplacements %}
+							<option value="{{ emplacement.id }}">{{ emplacement.libelle }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="mb-3 d-none">
+					<label for="conductivite" class="form-label">Conductivité (µS/cm)</label>
+					<input type="number" class="form-control" id="modifConductivite" name="modifConductivite" required>
+				</div>
+				<div class="mb-3 d-none">
+					<label for="turbidite" class="form-label">Turbidité (FNU)</label>
+					<input type="number" class="form-control" id="modifTurbidite" name="modifTurbidite" required>
+				</div>
+				<div class="mb-3 d-none">
+					<label for="alcalinite" class="form-label">Alcalinité (°F)</label>
+					<input type="number" class="form-control" id="modifAlcalinite" name="modifAlcalinite" required>
+				</div>
+				<div class="mb-3 d-none">
+					<label for="durete" class="form-label">Dureté (°F)</label>
+					<input type="number" class="form-control" id="modifDurete" name="modifDurete" required>
+				</div>
+				<div class="mb-3 d-none">
+					<label for="typePh" class="form-label">Type de pH</label>
+					<select class="form-select" id="modifTypePh" name="modifTypePh" required>
+						<option disabled selected>Choisir un type de pH</option>
+						{% for type in types %}
+							<option value="{{ type.id }}">{{ type.libelle }}</option>
+						{% endfor %}
+					</select>
+				</div>
+			{% endif %}
+
+			{% if role == 'analyseur' %}
+				<div class="mb-3 d-none">
+					<label for="datePrelevement" class="form-label">Date de prélèvement</label>
+					<input type="date" class="form-control" id="modifDatePrelevement" name="modifDatePrelevement" required>
+				</div>
+				<div class="mb-3 d-none">
+					<label for="emplacement" class="form-label">Emplacement</label>
+					<select class="form-select" id="modifEmplacement" name="modifEmplacement" required>
+						<option disabled selected>Choisir un emplacement</option>
+						{% for emplacement in emplacements %}
+							<option value="{{ emplacement.id }}">{{ emplacement.libelle }}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="mb-3">
+					<label for="conductivite" class="form-label">Conductivité (µS/cm)</label>
+					<input type="number" class="form-control" id="modifConductivite" name="modifConductivite" required>
+				</div>
+				<div class="mb-3">
+					<label for="turbidite" class="form-label">Turbidité (FNU)</label>
+					<input type="number" class="form-control" id="modifTurbidite" name="modifTurbidite" required>
+				</div>
+				<div class="mb-3">
+					<label for="alcalinite" class="form-label">Alcalinité (°F)</label>
+					<input type="number" class="form-control" id="modifAlcalinite" name="modifAlcalinite" required>
+				</div>
+				<div class="mb-3">
+					<label for="durete" class="form-label">Dureté (°F)</label>
+					<input type="number" class="form-control" id="modifDurete" name="modifDurete" required>
+				</div>
+				<div class="mb-3">
+					<label for="typePh" class="form-label">Type de pH</label>
+					<select class="form-select" id="modifTypePh" name="modifTypePh" required>
+						<option disabled selected>Choisir un type de pH</option>
+						{% for type in types %}
+							<option value="{{ type.id }}">{{ type.libelle }}</option>
+						{% endfor %}
+					</select>
+				</div>
+			{% endif %}
+		</div>
+		<div class="modal-footer">
+			<button type="submit" class="btn btn-primary">Enregistrer</button>
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+		</div>
+	</form>
+</div></div></div><div class="modal fade" id="modifierPrelevementNonAnalyseModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog">
+<div class="modal-content">
+	<form method="POST" id="modifNonAnalyseForm">
+		<div class="modal-header">
+			<h5 class="modal-title">Modifier le prélèvement non-analysé</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+		</div>
+		<div class="modal-body">
+			<div class="mb-3">
+				<label for="datePrelevement" class="form-label">Date de prélèvement</label>
+				<input type="date" class="form-control" id="modifDatePrelevementNonAnalyse" name="modifDatePrelevementNonAnalyse" required>
+			</div>
+			<div class="mb-3">
+				<label for="emplacement" class="form-label">Emplacement</label>
+				<select class="form-select" id="modifEmplacementPrelevementNonAnalyse" name="modifEmplacementPrelevementNonAnalyse" required>
+					<option disabled selected>Choisir un emplacement</option>
+					{% for emplacement in emplacements %}
+						<option value="{{ emplacement.id }}">{{ emplacement.libelle }}</option>
+					{% endfor %}
+				</select>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button type="submit" class="btn btn-primary">Enregistrer</button>
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+		</div>
+	</form>
+</div></div></div><script>document.addEventListener('DOMContentLoaded', () => {
+const analyseModal = document.getElementById('analyserPrelevementModal');
+analyseModal.addEventListener('show.bs.modal', function (event) {
+const button = event.relatedTarget;
+
+const form = analyseModal.querySelector('form');
+const id = button.getAttribute('data-id');
+form.action = `/gestion_prelevement/analyse/${id}`;
+
+});
+});</script><script>document.addEventListener('DOMContentLoaded', () => {
+const modifModal = document.getElementById('modifierPrelevementModal');
+modifModal.addEventListener('show.bs.modal', function (event) {
+const button = event.relatedTarget;
+
+const id = button.getAttribute('data-id');
+const datePrelevement = button.getAttribute('data-date');
+const emplacementId = button.getAttribute('data-emplacementId');
+const conductivite = button.getAttribute('data-conductivite');
+const turbidite = button.getAttribute('data-turbidite');
+const alcalinite = button.getAttribute('data-alcalinite');
+const durete = button.getAttribute('data-durete');
+const typePh = button.getAttribute('data-typeph');
 
 
-{% endblock %}
+document.getElementById('modifDatePrelevement').value = datePrelevement;
+
+const emplacementSelect = document.getElementById('modifEmplacement');
+const options = emplacementSelect.options;
+for (let i = 0; i < options.length; i++) {
+if (options[i].value == emplacementId) {
+options[i].selected = true;
+break;
+}
+}
+
+document.getElementById('modifConductivite').value = conductivite;
+document.getElementById('modifTurbidite').value = turbidite;
+document.getElementById('modifAlcalinite').value = alcalinite;
+document.getElementById('modifDurete').value = durete;
+document.getElementById('modifTypePh').value = typePh;
+
+const form = document.getElementById('modifForm');
+form.action = `/gestion_prelevement/modif/${id}`;
+
+});
+});</script><script>document.addEventListener('DOMContentLoaded', () => {
+const modifModal = document.getElementById('modifierPrelevementNonAnalyseModal');
+modifModal.addEventListener('show.bs.modal', function (event) {
+const button = event.relatedTarget;
+
+const id = button.getAttribute('data-idNonAnalyse');
+const datePrelevementNonAnalyse = button.getAttribute('data-dateNonAnalyse');
+const emplacementIdPrelevementNonAnalyse = button.getAttribute('data-emplacementIdNonAnalyse');
+
+
+document.getElementById('modifDatePrelevementNonAnalyse').value = datePrelevementNonAnalyse;
+
+const emplacementSelect = document.getElementById('modifEmplacementPrelevementNonAnalyse');
+const options = emplacementSelect.options;
+for (let i = 0; i < options.length; i++) {
+if (options[i].value == emplacementIdPrelevementNonAnalyse) {
+options[i].selected = true;
+break;
+}
+}
+
+const form = document.getElementById('modifNonAnalyseForm');
+form.action = `/gestion_prelevement/modif-nonAnalyse/${id}`;
+
+});
+});</script>{% endblock %}

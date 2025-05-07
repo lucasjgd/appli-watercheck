@@ -42,7 +42,7 @@
 								<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifUtilisateurModal" data-id="{{ utilisateur.id }}" data-nom="{{ utilisateur.nom }}" data-mail="{{ utilisateur.mail }}" data-role="{{ utilisateur.role }}">
 									Modifier
 								</button>
-								<form class="btn-suppr-emplacement" method="POST" action="{{ path('gestion_utilisateur_suppr', { id: utilisateur.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+								<form class="btn-suppr" method="POST" action="{{ path('gestion_utilisateur_suppr', { id: utilisateur.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
 									<button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
 								</form>
 							</td>

@@ -37,10 +37,11 @@
 								<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifLieuModal" data-id="{{ emplacement.id }}" data-libelle="{{ emplacement.libelle }}" data-latitude="{{ emplacement.latitude }}" data-longitude="{{ emplacement.longitude }}" data-ville="{{ emplacement.ville.id }}">
 									Modifier
 								</button>
-
-								<form class = "btn-suppr-emplacement" method="POST" action="{{ path('gestion_emplacement_suppr', { id: emplacement.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet emplacement ?');">
-									<button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-								</form>
+								{% if app.session.get('utilisateur').role|lower == "admin" %}
+									<form class="btn-suppr" method="POST" action="{{ path('gestion_emplacement_suppr', { id: emplacement.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet emplacement ?');">
+										<button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+									</form>
+								{% endif %}
 							</td>
 						</tr>
 					{% else %}

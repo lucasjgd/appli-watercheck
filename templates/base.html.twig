@@ -39,13 +39,7 @@
 						{% if app.session.get('utilisateur') %}
 							{% set role = app.session.get('utilisateur').role|lower %}
 
-							{% if role == 'client' %}
-								<li class="nav-item">
-									<a class="nav-link text-white" href="{{ path('deconnexion') }}">
-										Déconnexion ({{ app.session.get('utilisateur').nom }})
-									</a>
-								</li>
-							{% else %}
+							{% if role == 'admin' %}
 								<li class="nav-item dropdown">
 									<a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 										Gestion
@@ -67,10 +61,55 @@
 								</li>
 								<li class="nav-item">
 									<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2" href="{{ path('deconnexion') }}">{{ app.session.get('utilisateur').nom }}
-									<i class="fa-solid fa-right-from-bracket"></i>
+										<i class="fa-solid fa-right-from-bracket"></i>
+									</a>
+								</li>
+							{% elseif role == 'preleveur' %}
+								<li class="nav-item dropdown">
+									<a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+										Gestion
+									</a>
+									<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+										<li>
+											<a class="dropdown-item" href="{{ path('gestion_prelevement') }}">Gestion des prélèvements</a>
+										</li>
+										<li>
+											<a class="dropdown-item" href="{{ path('gestion_emplacement') }}">Gestion des emplacements</a>
+										</li>
+									</ul>
+								</li>
+								<li class="nav-item">
+									<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2" href="{{ path('deconnexion') }}">{{ app.session.get('utilisateur').nom }}
+										<i class="fa-solid fa-right-from-bracket"></i>
+									</a>
+								</li>
+							{% elseif role == 'analyseur' %}
+								<li class="nav-item dropdown">
+									<a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+										Gestion
+									</a>
+									<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+										<li>
+											<a class="dropdown-item" href="{{ path('gestion_prelevement') }}">Gestion des prélèvements</a>
+										</li>
+										<li>
+											<a class="dropdown-item" href="{{ path('gestion_type_ph') }}">Gestion des types de pH</a>
+										</li>
+									</ul>
+								</li>
+								<li class="nav-item">
+									<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2" href="{{ path('deconnexion') }}">{{ app.session.get('utilisateur').nom }}
+										<i class="fa-solid fa-right-from-bracket"></i>
+									</a>
+								</li>
+							{% else %}
+								<li class="nav-item">
+									<a class="nav-link text-white" href="{{ path('deconnexion') }}">
+										Déconnexion ({{ app.session.get('utilisateur').nom }})
 									</a>
 								</li>
 							{% endif %}
+
 						{% else %}
 							<li class="nav-item">
 								<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2" href="{{ path('connexion') }}">

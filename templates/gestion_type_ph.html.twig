@@ -11,7 +11,7 @@
 
 			<div class="d-flex justify-content-end mb-3">
 				<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTypeModal">Ajouter un type de
-										                    pH</button>
+															                    pH</button>
 			</div>
 
 			<table class="table table-bordered table-hover">
@@ -29,10 +29,11 @@
 								<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifTypeModal" data-id="{{ type.id }}" data-libelle="{{ type.libelle }}">
 									Modifier
 								</button>
-
-								<form class="btn-suppr-emplacement" method="POST" action="{{ path('gestion_type_ph_suppr', { id: type.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce type ?');">
-									<button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-								</form>
+								{% if app.session.get('utilisateur').role|lower == "admin" %}
+									<form class="btn-suppr" method="POST" action="{{ path('gestion_type_ph_suppr', { id: type.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce type ?');">
+										<button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+									</form>
+								{% endif %}
 							</td>
 						</tr>
 					{% else %}

@@ -12,29 +12,7 @@
             <div class="d-flex gap-1 align-items-center"><div class="rond-rouge"></div><p class="mb-0">Eau non potable</p></div>
         </div>
         {% component 'MapPrelevement' with {
-            prelevements: [
-                {
-                    lieu: "Lac Bleu",
-                    ville: "Marseille",
-                    coord: [43.2965, 5.3698],
-                    date: "01/04/2025",
-                    etat: "Potable"
-                },
-                {
-                    lieu: "Rivière Verte",
-                    ville: "Lyon",
-                    coord: [45.75, 4.85],
-                    date: "25/03/2025",
-                    etat: "Moyennement potable"
-                },
-                {
-                    lieu: "Étang Noir",
-                    ville: "Toulouse",
-                    coord: [43.6047, 1.4442],
-                    date: "15/03/2025",
-                    etat: "Non potable"
-                }
-            ]
+            prelevements: prelevements
         } %}
         {% endcomponent %}
     </div>
