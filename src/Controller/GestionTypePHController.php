@@ -8,6 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\TypePH;
+use App\Entity\Prelevement;
 
 final class GestionTypePHController extends AbstractController
 {
@@ -32,6 +33,7 @@ final class GestionTypePHController extends AbstractController
         $entityManager->persist($type);
         $entityManager->flush();
 
+        $this->addFlash('success', "Type pH ajouté avec succés.");
         return $this->redirectToRoute('gestion_type_ph');
     }
 
@@ -40,7 +42,7 @@ final class GestionTypePHController extends AbstractController
     {
         $type = $entityManager->getRepository(TypePH::class)->find($id);
         if (!$type) {
-            throw $this->createNotFoundException("Type non trouvé.");
+            $this->addFlash('error', "Type non trouvé.");
         }
 
         $nomType = $request->request->get('nomType');
@@ -49,6 +51,7 @@ final class GestionTypePHController extends AbstractController
 
         $entityManager->flush();
 
+        $this->addFlash('success', "Type modifié avec succés.");
         return $this->redirectToRoute('gestion_type_ph');
     }
 
@@ -57,12 +60,20 @@ final class GestionTypePHController extends AbstractController
     {
         $type = $entityManager->getRepository(TypePH::class)->find($id);
         if (!$type) {
-            throw $this->createNotFoundException("Type non trouvé.");
+            $this->addFlash('error', "Type non trouvé.");
+        }
+
+        $prelevements = $entityManager->getRepository(Prelevement::class)->findBy(['typePh' => $type]);
+
+        if (count($prelevements) > 0) {
+            $this->addFlash('error', "Impossible de supprimer ce type car des prélèvements y sont liés.");
+            return $this->redirectToRoute('gestion_type_ph');
         }
 
         $entityManager->remove($type);
         $entityManager->flush();
 
+        $this->addFlash('success', "Type supprimé avec succés.");
         return $this->redirectToRoute('gestion_type_ph');
     }
 }

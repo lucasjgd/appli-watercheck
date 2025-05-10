@@ -73,7 +73,7 @@
 								</button>
 							{% endif %}
 							{% if app.session.get('utilisateur').role|lower == "admin" %}
-								<form class="btn-suppr" method="POST" action="#" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce prélèvement ?');">
+								<form class="btn-suppr" method="POST" action="{{ path('gestion_prelevement_suppr', { id: prelevement.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce prélèvement ?');">
 									<button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
 								</form>
 							{% endif %}

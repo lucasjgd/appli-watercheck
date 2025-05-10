@@ -57,6 +57,7 @@ final class GestionPrelevementController extends AbstractController
         $entityManager->persist($prelevement);
         $entityManager->flush();
 
+        $this->addFlash('success', "Prélèvement ajouté avec succés.");
         return $this->redirectToRoute('gestion_prelevement');
     }
 
@@ -94,6 +95,7 @@ final class GestionPrelevementController extends AbstractController
 
         $entityManager->flush();
 
+        $this->addFlash('success', "Prélèvement analysé avec succés.");
         return $this->redirectToRoute('gestion_prelevement');
     }
 
@@ -151,7 +153,7 @@ final class GestionPrelevementController extends AbstractController
         }
 
         $entityManager->flush();
-
+        $this->addFlash('success', "Prélèvement modifié avec succés.");
         return $this->redirectToRoute('gestion_prelevement');
     }
 
@@ -181,6 +183,24 @@ final class GestionPrelevementController extends AbstractController
 
         $entityManager->flush();
 
+        $this->addFlash('success', "Prélèvement modifié avec succés.");
         return $this->redirectToRoute('gestion_prelevement');
     }
+
+    #[Route('/gestion_prelevement/suppr/{id}', name: 'gestion_prelevement_suppr', methods: ['POST'])]
+    public function supprPrelevement(int $id, EntityManagerInterface $entityManager): Response
+    {
+        $prelevement = $entityManager->getRepository(Prelevement::class)->find($id);
+        if (!$prelevement) {
+            $this->addFlash('error', "Prélèvement non trouvé.");
+        }
+
+
+        $entityManager->remove($prelevement);
+        $entityManager->flush();
+
+        $this->addFlash('success', "Prélèvement supprimé avec succés.");
+        return $this->redirectToRoute('gestion_prelevement');
+    }
+
 }

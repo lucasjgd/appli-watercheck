@@ -11,6 +11,7 @@ use App\Entity\Utilisateur;
 use App\Entity\Admin;
 use App\Entity\Analyseur;
 use App\Entity\Preleveur;
+use App\Entity\Prelevement;
 use App\Entity\Client;
 use App\Repository\PrelevementRepository;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -141,7 +142,7 @@ final class GestionUtilisateurController extends AbstractController
 
 
     #[Route('/gestion_utilisateur/suppr/{id}', name: 'gestion_utilisateur_suppr', methods: ['POST'])]
-    public function supprUtilisateur(int $id, EntityManagerInterface $entityManager, PrelevementRepository $prelevementRepository): Response
+    public function supprUtilisateur(int $id, EntityManagerInterface $entityManager): Response
     {
         $utilisateur = $entityManager->getRepository(Utilisateur::class)->find($id);
 
@@ -149,8 +150,8 @@ final class GestionUtilisateurController extends AbstractController
             $this->addFlash('error', "Utilisateur non trouvé.");
         }
 
-        $nbLiens = $prelevementRepository->nbrPrelevement($utilisateur);
-
+        $nbLiens = $entityManager->getRepository(Prelevement::class)->nbrPrelevement($utilisateur);
+ 
         if ($nbLiens > 0) {
             $this->addFlash('error', "Impossible de supprimer l'utilisateur car il est lié à des prélèvements.");
             return $this->redirectToRoute('gestion_utilisateur');

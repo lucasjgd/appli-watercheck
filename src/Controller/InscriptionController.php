@@ -38,7 +38,7 @@ class InscriptionController extends AbstractController
 
             $em->persist($utilisateur);
             $em->flush();
-            $this->addFlash('success', 'Inscription réussie!');
+            $this->addFlash('success', 'Inscription réussie !');
             return $this->redirectToRoute('connexion'); 
         }
 
