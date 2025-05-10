@@ -12,6 +12,7 @@ use App\Entity\Admin;
 use App\Entity\Analyseur;
 use App\Entity\Preleveur;
 use App\Entity\Client;
+use App\Repository\PrelevementRepository;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final class GestionUtilisateurController extends AbstractController
@@ -38,7 +39,7 @@ final class GestionUtilisateurController extends AbstractController
 
         if (!preg_match($verif, $mdp)) {
             $this->addFlash('error', "Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.");
-            return $this->redirectToRoute('gestion_utilisateur'); 
+            return $this->redirectToRoute('gestion_utilisateur');
         }
 
         if ($role === "admin") {
@@ -59,15 +60,22 @@ final class GestionUtilisateurController extends AbstractController
         $entityManager->persist($utilisateur);
         $entityManager->flush();
 
+        $this->addFlash('success', "Utilisateur ajouté avec succès.");
         return $this->redirectToRoute('gestion_utilisateur');
     }
 
     #[Route('/gestion_utilisateur/modif/{id}', name: 'gestion_utilisateur_modif', methods: ['POST'])]
-    public function modifUtilisateur(int $id, Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $hash): Response
-    {
-        $utilisateur = $entityManager->getRepository(className: Utilisateur::class)->find($id);
+    public function modifUtilisateur(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $hash,
+        PrelevementRepository $prelevementRepo
+    ): Response {
+        $utilisateur = $entityManager->getRepository(Utilisateur::class)->find($id);
         if (!$utilisateur) {
-            throw $this->createNotFoundException("Utilisateur non trouvé.");
+            $this->addFlash('error', "Utilisateur non trouvé.");
+            return $this->redirectToRoute('gestion_utilisateur');
         }
 
         $ancienMdp = $utilisateur->getMdp();
@@ -79,54 +87,80 @@ final class GestionUtilisateurController extends AbstractController
         $mdp = $request->request->get('modif-mdp');
         $role = $request->request->get('modif-role');
 
-        if (!preg_match($verif, $mdp)) {
+        if ($mdp && !preg_match($verif, $mdp)) {
             $this->addFlash('error', "Le mot de passe doit contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.");
-            return $this->redirectToRoute('gestion_utilisateur'); 
+            return $this->redirectToRoute('gestion_utilisateur');
         }
 
-        $entityManager->remove($utilisateur);
-        $entityManager->flush();
+        $nombrePrelevements = $prelevementRepo->nbrPrelevement($utilisateur);
 
-        if ($role === "admin") {
-            $nouvUtilisateur = new Admin();
-        } else if ($role === "analyseur") {
-            $nouvUtilisateur = new Analyseur();
-        } else if ($role === "preleveur") {
-            $nouvUtilisateur = new Preleveur();
-        } else {
-            $nouvUtilisateur = new Client();
+        if ($utilisateur::class !== 'App\Entity\\' . ucfirst($role) && $nombrePrelevements > 0) {
+            $this->addFlash('error', "Impossible de modifier le rôle de cet utilisateur car il est lié à des prélèvements.");
+            return $this->redirectToRoute('gestion_utilisateur');
         }
 
-        $nouvUtilisateur->setNom($nom);
-        $nouvUtilisateur->setMail($mail);
+       
+        if ($utilisateur::class !== 'App\Entity\\' . ucfirst($role)) {
+            $entityManager->remove($utilisateur);
+            $entityManager->flush();
 
+            switch ($role) {
+                case "admin":
+                    $nouvUtilisateur = new Admin();
+                    break;
+                case "analyseur":
+                    $nouvUtilisateur = new Analyseur();
+                    break;
+                case "preleveur":
+                    $nouvUtilisateur = new Preleveur();
+                    break;
+                default:
+                    $nouvUtilisateur = new Client();
+            }
+
+            $utilisateur = $nouvUtilisateur; 
+        }
+
+        $utilisateur->setNom($nom);
+        $utilisateur->setMail($mail);
 
         if ($mdp) {
-            $mdpHash = $hash->hashPassword($nouvUtilisateur, $mdp);
-            $nouvUtilisateur->setMdp($mdpHash);
+            $mdpHash = $hash->hashPassword($utilisateur, $mdp);
+            $utilisateur->setMdp($mdpHash);
         } else {
-            $nouvUtilisateur->setMdp($ancienMdp);
+            $utilisateur->setMdp($ancienMdp);
         }
 
-
-        $entityManager->persist($nouvUtilisateur);
+        $entityManager->persist($utilisateur);
         $entityManager->flush();
 
+        $this->addFlash('success', "Utilisateur modifié avec succès.");
         return $this->redirectToRoute('gestion_utilisateur');
     }
+
 
 
     #[Route('/gestion_utilisateur/suppr/{id}', name: 'gestion_utilisateur_suppr', methods: ['POST'])]
-    public function supprUtilisateur(int $id, EntityManagerInterface $entityManager): Response
+    public function supprUtilisateur(int $id, EntityManagerInterface $entityManager, PrelevementRepository $prelevementRepository): Response
     {
         $utilisateur = $entityManager->getRepository(Utilisateur::class)->find($id);
+
         if (!$utilisateur) {
-            throw $this->createNotFoundException("Utilisateur non trouvé.");
+            $this->addFlash('error', "Utilisateur non trouvé.");
+        }
+
+        $nbLiens = $prelevementRepository->nbrPrelevement($utilisateur);
+
+        if ($nbLiens > 0) {
+            $this->addFlash('error', "Impossible de supprimer l'utilisateur car il est lié à des prélèvements.");
+            return $this->redirectToRoute('gestion_utilisateur');
         }
 
         $entityManager->remove($utilisateur);
         $entityManager->flush();
 
+        $this->addFlash('success', "Utilisateur supprimé avec succès.");
         return $this->redirectToRoute('gestion_utilisateur');
     }
+
 }

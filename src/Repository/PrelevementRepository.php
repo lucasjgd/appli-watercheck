@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Prelevement;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\Utilisateur;
 
 /**
  * @extends ServiceEntityRepository<Prelevement>
@@ -28,5 +29,18 @@ class PrelevementRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    // src/Repository/PrelevementRepository.php
+
+    public function nbrPrelevement(Utilisateur $utilisateur): int
+    {
+        return $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->where('p.preleveur = :user OR p.analyseur = :user')
+            ->setParameter('user', $utilisateur)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
 
 }

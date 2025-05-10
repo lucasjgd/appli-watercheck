@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Emplacement;
 use App\Entity\Ville;
+use App\Entity\Prelevement;
 
 final class GestionEmplacementController extends AbstractController
 {
@@ -35,7 +36,7 @@ final class GestionEmplacementController extends AbstractController
 
         $ville = $entityManager->getRepository(Ville::class)->find($villeId);
         if (!$ville) {
-            throw $this->createNotFoundException("Ville non trouvée.");
+            $this->addFlash('error', "Ville non trouvée.");
         }
 
         $emplacement = new Emplacement();
@@ -47,6 +48,7 @@ final class GestionEmplacementController extends AbstractController
         $entityManager->persist($emplacement);
         $entityManager->flush();
 
+        $this->addFlash('success', "Emplacement ajouté avec succés.");
         return $this->redirectToRoute('gestion_emplacement');
     }
 
@@ -56,7 +58,7 @@ final class GestionEmplacementController extends AbstractController
     {
         $emplacement = $entityManager->getRepository(Emplacement::class)->find($id);
         if (!$emplacement) {
-            throw $this->createNotFoundException("Emplacement non trouvé.");
+            $this->addFlash("error","Emplacement non trouvé.");
         }
 
         $nomLieu = $request->request->get('nomLieu');
@@ -66,7 +68,7 @@ final class GestionEmplacementController extends AbstractController
 
         $ville = $entityManager->getRepository(Ville::class)->find($villeId);
         if (!$ville) {
-            throw $this->createNotFoundException("Ville non trouvée.");
+            $this->addFlash('error', "Ville non trouvée.");
         }
 
         $emplacement->setLibelle($nomLieu);
@@ -76,6 +78,7 @@ final class GestionEmplacementController extends AbstractController
 
         $entityManager->flush();
 
+        $this->addFlash('success', "Emplacement modifié avec succés.");
         return $this->redirectToRoute('gestion_emplacement');
     }
 
@@ -84,8 +87,16 @@ final class GestionEmplacementController extends AbstractController
     {
         $emplacement = $entityManager->getRepository(Emplacement::class)->find($id);
         if (!$emplacement) {
-            throw $this->createNotFoundException("Emplacement non trouvé.");
+            $this->addFlash('error', "Emplacement non trouvé.");
         }
+
+        $prelevements = $entityManager->getRepository(Prelevement::class)->findBy(['emplacement' => $emplacement]);
+
+        if (count($prelevements) > 0) {
+            $this->addFlash('error', "Impossible de supprimer cet emplacement car des prélèvements y sont liés.");
+            return $this->redirectToRoute('gestion_emplacement');
+        }
+
 
         $entityManager->remove($emplacement);
         $entityManager->flush();

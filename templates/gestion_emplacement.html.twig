@@ -5,11 +5,19 @@
 
 {% block body %}
 
+	{% for label, messages in app.flashes %}
+		<div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show m-2" role="alert">
+			{% for message in messages %}
+				{{ message }}
+			{% endfor %}
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	{% endfor %}
+
 	<main class="m-5 content">
 		<div>
 			<h1 class="mb-4 text-center">Gestion des emplacements</h1>
 
-			<!-- Bouton pour ajouter un lieu -->
 			<div class="d-flex justify-content-end mb-3">
 				<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLieuModal">Ajouter un emplacement</button>
 			</div>
