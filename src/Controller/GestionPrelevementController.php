@@ -15,6 +15,7 @@ use App\Entity\Utilisateur;
 use App\Entity\Admin;
 use App\Entity\TypePH;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Psr\Log\LoggerInterface;
 
 final class GestionPrelevementController extends AbstractController
 {
@@ -33,7 +34,7 @@ final class GestionPrelevementController extends AbstractController
     }
 
     #[Route('/gestion_prelevement/ajout', name: 'gestion_prelevement_ajout', methods: ['POST'])]
-    public function ajoutPrelevement(Request $request, EntityManagerInterface $entityManager): Response
+    public function ajoutPrelevement(Request $request, EntityManagerInterface $entityManager,LoggerInterface $logs): Response
     {
         $emplacementPrelevement = $request->request->get('emplacementPrelevement');
         $preleveur = $request->request->get('preleveurPrevelement');
@@ -57,12 +58,17 @@ final class GestionPrelevementController extends AbstractController
         $entityManager->persist($prelevement);
         $entityManager->flush();
 
+        $logs->info('Prélèvement ajouté', [
+        'date' => $date->format('Y-m-d'),
+        'preleveur_id' => $verifRole->getId(),
+    ]);
+
         $this->addFlash('success', "Prélèvement ajouté avec succés.");
         return $this->redirectToRoute('gestion_prelevement');
     }
 
     #[Route('/gestion_prelevement/analyse/{id}', name: 'gestion_prelevement_analyse', methods: ['POST'])]
-    public function analysePrelevement(int $id, Request $request, EntityManagerInterface $entityManager): Response
+    public function analysePrelevement(int $id, Request $request, EntityManagerInterface $entityManager, LoggerInterface $logs): Response
     {
         $prelevement = $entityManager->getRepository(Prelevement::class)->find($id);
         if (!$prelevement) {
@@ -94,6 +100,11 @@ final class GestionPrelevementController extends AbstractController
         $prelevement->setTypePh($verifType);
 
         $entityManager->flush();
+
+        $logs->info('Prélèvement analysé', [
+        'prelevement_id' => $prelevement->getId(),
+        'analyseur_id' => $verifRole->getId(),
+    ]);
 
         $this->addFlash('success', "Prélèvement analysé avec succés.");
         return $this->redirectToRoute('gestion_prelevement');
