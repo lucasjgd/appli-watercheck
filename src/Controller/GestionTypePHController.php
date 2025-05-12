@@ -9,16 +9,23 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\TypePH;
 use App\Entity\Prelevement;
+use Knp\Component\Pager\PaginatorInterface;
 
 final class GestionTypePHController extends AbstractController
 {
     #[Route('gestion_type_ph', name: 'gestion_type_ph')]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(EntityManagerInterface $entityManager, PaginatorInterface $pagination, Request $request): Response
     {
         $types = $entityManager->getRepository(TypePH::class)->findAll();
 
+        $typesPagination = $pagination->paginate(
+        $types,
+        $request->query->getInt('page', 1), 
+        5 
+    );
+
         return $this->render('gestion_type_ph.html.twig', [
-            'types' => $types,
+            'types' => $typesPagination,
         ]);
     }
 

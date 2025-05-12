@@ -15,16 +15,24 @@ use App\Entity\Prelevement;
 use App\Entity\Client;
 use App\Repository\PrelevementRepository;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Knp\Component\Pager\PaginatorInterface;
+
 
 final class GestionUtilisateurController extends AbstractController
 {
     #[Route('/gestion_utilisateur', name: 'gestion_utilisateur')]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(EntityManagerInterface $entityManager, PaginatorInterface $pagination, Request $request): Response
     {
-        $utilisateur = $entityManager->getRepository(Utilisateur::class)->findAll();
+        $utilisateurs = $entityManager->getRepository(Utilisateur::class)->orderByRole();
+
+        $utilisateursPagination = $pagination->paginate(
+        $utilisateurs,
+        $request->query->getInt('page', 1), 
+        15
+    );
 
         return $this->render('gestion_utilisateur.html.twig', [
-            'utilisateurs' => $utilisateur,
+            'utilisateurs' => $utilisateursPagination,
         ]);
     }
 

@@ -3,10 +3,11 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UtilisateurRepository;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 #[ORM\InheritanceType("SINGLE_TABLE")]
 #[ORM\DiscriminatorColumn(name: "role", type: "string")]
 #[ORM\DiscriminatorMap([

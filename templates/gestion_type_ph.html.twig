@@ -21,7 +21,7 @@
 
 			<div class="d-flex justify-content-end mb-3">
 				<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTypeModal">Ajouter un type de
-																				                    pH</button>
+																									                    pH</button>
 			</div>
 
 			<table class="table table-bordered table-hover">
@@ -53,6 +53,9 @@
 					{% endfor %}
 				</tbody>
 			</table>
+			
+		<div class="d-flex justify-content-center mt-4">
+			{{ knp_pagination_render(types) }}</div>
 		</div>
 
 		<div class="modal fade" id="addTypeModal" tabindex="-1" aria-labelledby="addTypeModalLabel" aria-hidden="true">

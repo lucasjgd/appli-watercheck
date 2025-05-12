@@ -81,6 +81,42 @@ header {
     display: none;
 }
 
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    padding-left: 0;
+    justify-content: center;
+}
+
+.pagination li {
+    display: inline-block;
+}
+
+.pagination a {
+    display: inline-block;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #212529;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: none;
+    transition: background-color 0.2s;
+}
+
+.pagination .current {
+    display: inline-block;
+    padding: 8px 12px;
+    text-decoration: none;
+    background-color: #0e7bd0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: white;
+    transition: background-color 0.2s;
+}
+
+
+
 footer {
     background-color: #0e7bd0;
     color: white;

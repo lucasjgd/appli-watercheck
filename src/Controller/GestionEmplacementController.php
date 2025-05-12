@@ -10,17 +10,26 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Emplacement;
 use App\Entity\Ville;
 use App\Entity\Prelevement;
+use Knp\Component\Pager\PaginatorInterface;
+
 
 final class GestionEmplacementController extends AbstractController
 {
     #[Route('/gestion_emplacement', name: 'gestion_emplacement')]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(EntityManagerInterface $entityManager, PaginatorInterface $pagination, Request $request): Response
     {
-        $emplacements = $entityManager->getRepository(Emplacement::class)->findAll();
+        $emplacements = $entityManager->getRepository(Emplacement::class)->emplacementOrdreVille();
+
+        $emplacementsPagination = $pagination->paginate(
+            $emplacements,
+            $request->query->getInt('page', 1),
+            15
+        );
+
         $villes = $entityManager->getRepository(Ville::class)->findAll();
 
         return $this->render('gestion_emplacement.html.twig', [
-            'emplacements' => $emplacements,
+            'emplacements' => $emplacementsPagination,
             'villes' => $villes,
         ]);
     }
@@ -58,7 +67,7 @@ final class GestionEmplacementController extends AbstractController
     {
         $emplacement = $entityManager->getRepository(Emplacement::class)->find($id);
         if (!$emplacement) {
-            $this->addFlash("error","Emplacement non trouvé.");
+            $this->addFlash("error", "Emplacement non trouvé.");
         }
 
         $nomLieu = $request->request->get('nomLieu');

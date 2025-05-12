@@ -30,7 +30,6 @@ class PrelevementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    // src/Repository/PrelevementRepository.php
 
     public function nbrPrelevement(Utilisateur $utilisateur): int
     {
@@ -42,5 +41,11 @@ class PrelevementRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-
+    public function prelevementOrdreDate(): array
+    {
+        return $this->createQueryBuilder('r')
+            ->orderBy('r.datePrelevement', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

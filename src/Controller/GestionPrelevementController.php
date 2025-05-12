@@ -16,19 +16,25 @@ use App\Entity\Admin;
 use App\Entity\TypePH;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Psr\Log\LoggerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 final class GestionPrelevementController extends AbstractController
 {
     #[Route('/gestion_prelevement', name: 'gestion_prelevement')]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(EntityManagerInterface $entityManager, PaginatorInterface $pagination, Request $request): Response
     {
-        $emplacements = $entityManager->getRepository(Emplacement::class)->findAll();
-        $prelevements = $entityManager->getRepository(Prelevement::class)->findAll();
+        $emplacements = $entityManager->getRepository(Emplacement::class)->emplacementOrdreA();
+        $prelevements = $entityManager->getRepository(Prelevement::class)->prelevementOrdreDate();
+        $prelevementsPagination = $pagination->paginate(
+        $prelevements,
+        $request->query->getInt('page', 1), 
+        15 
+    );
         $typesPH = $entityManager->getRepository(TypePH::class)->findAll();
 
         return $this->render('gestion_prelevement.html.twig', [
             'emplacements' => $emplacements,
-            'prelevements' => $prelevements,
+            'prelevements' => $prelevementsPagination,
             'types' => $typesPH,
         ]);
     }

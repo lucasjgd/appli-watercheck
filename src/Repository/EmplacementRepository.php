@@ -16,6 +16,16 @@ class EmplacementRepository extends ServiceEntityRepository
         parent::__construct($registry, Emplacement::class);
     }
 
+    public function emplacementOrdreVille(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->join('e.ville', 'v')
+            ->orderBy('v.libelle', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+
     //    /**
     //     * @return Emplacement[] Returns an array of Emplacement objects
     //     */

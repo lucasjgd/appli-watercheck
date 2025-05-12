@@ -16,6 +16,13 @@
 
 	<main class="m-5 content">
 		<h1 class="mb-4 text-center">Gestion des Prélèvements</h1>
+		<div class="d-flex gap-2 align-items-center">
+			<p class="mb-0">Filtrer :</p>
+			<button class="btn btn-primary me-2" onclick="filtrerPrelevements('tous')">Tous les prélèvements</button>
+			<button class="btn btn-primary me-2" onclick="filtrerPrelevements('analyses')">Prélèvements Analysés</button>
+			<button class="btn btn-primary" onclick="filtrerPrelevements('nonAnalyses')">Prélèvements non analysés</button>
+		</div>
+
 		{% if app.session.get('utilisateur').role|lower == "preleveur" or app.session.get('utilisateur').role|lower == "admin"  %}
 
 			<div class="d-flex justify-content-end mb-3">
@@ -39,7 +46,8 @@
 			</thead>
 			<tbody>
 				{% for prelevement in prelevements %}
-					<tr>
+					{% set estAnalyse = prelevement.typePh and prelevement.conductivite and prelevement.turbidite and prelevement.alcalinite and prelevement.durete %}
+					<tr class="prelevement {% if estAnalyse %}analyse{% else %}non-analyse{% endif %}">
 						<td>{{ prelevement.datePrelevement|date('d/m/Y') }}</td>
 						<td>{{ prelevement.emplacement.libelle }}</td>
 						<td>{{ prelevement.conductivite }}</td>
@@ -87,7 +95,8 @@
 			<td colspan="4" class="text-center">Aucun prélèvement trouvé.</td>
 		</tr>
 	{% endfor %}
-</tbody></table></main><div class="modal fade" id="ajoutPrelevementModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog">
+</tbody></table><div class="d-flex justify-content-center mt-4">
+{{ knp_pagination_render(prelevements) }}</div></main><div class="modal fade" id="ajoutPrelevementModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog">
 <div class="modal-content">
 	<form action="{{ path('gestion_prelevement_ajout') }}" method="POST">
 		<div class="modal-header">
@@ -391,4 +400,16 @@ const form = document.getElementById('modifNonAnalyseForm');
 form.action = `/gestion_prelevement/modif-nonAnalyse/${id}`;
 
 });
-});</script>{% endblock %}
+});</script><script>function filtrerPrelevements(type) {
+const lignes = document.querySelectorAll('.prelevement');
+
+lignes.forEach(ligne => {
+ligne.style.display = 'table-row';
+if (type === 'analyses' && !ligne.classList.contains('analyse')) {
+ligne.style.display = 'none';
+}
+if (type === 'nonAnalyses' && !ligne.classList.contains('non-analyse')) {
+ligne.style.display = 'none';
+}
+});
+}</script>{% endblock %}
