@@ -23,13 +23,13 @@ final class GestionPrelevementController extends AbstractController
     #[Route('/gestion_prelevement', name: 'gestion_prelevement')]
     public function index(EntityManagerInterface $entityManager, PaginatorInterface $pagination, Request $request): Response
     {
-        $emplacements = $entityManager->getRepository(Emplacement::class)->emplacementOrdreA();
+        $emplacements = $entityManager->getRepository(Emplacement::class)->findAll();
         $prelevements = $entityManager->getRepository(Prelevement::class)->prelevementOrdreDate();
         $prelevementsPagination = $pagination->paginate(
-        $prelevements,
-        $request->query->getInt('page', 1), 
-        15 
-    );
+            $prelevements,
+            $request->query->getInt('page', 1),
+            15
+        );
         $typesPH = $entityManager->getRepository(TypePH::class)->findAll();
 
         return $this->render('gestion_prelevement.html.twig', [
@@ -40,7 +40,7 @@ final class GestionPrelevementController extends AbstractController
     }
 
     #[Route('/gestion_prelevement/ajout', name: 'gestion_prelevement_ajout', methods: ['POST'])]
-    public function ajoutPrelevement(Request $request, EntityManagerInterface $entityManager,LoggerInterface $logs): Response
+    public function ajoutPrelevement(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logs): Response
     {
         $emplacementPrelevement = $request->request->get('emplacementPrelevement');
         $preleveur = $request->request->get('preleveurPrevelement');
@@ -54,7 +54,7 @@ final class GestionPrelevementController extends AbstractController
         $prelevement->setDatePrelevement($date);
 
 
-        if ($verifRole instanceof Preleveur or $verifRole instanceof Admin ) {
+        if ($verifRole instanceof Preleveur or $verifRole instanceof Admin) {
             $prelevement->setPreleveur($verifRole);
         } else {
             $this->addFlash('error', "Vous n'êtes pas un preleveur.");
@@ -65,9 +65,9 @@ final class GestionPrelevementController extends AbstractController
         $entityManager->flush();
 
         $logs->info('Prélèvement ajouté', [
-        'date' => $date->format('Y-m-d'),
-        'preleveur_id' => $verifRole->getId(),
-    ]);
+            'date' => $date->format('Y-m-d'),
+            'preleveur_id' => $verifRole->getId(),
+        ]);
 
         $this->addFlash('success', "Prélèvement ajouté avec succés.");
         return $this->redirectToRoute('gestion_prelevement');
@@ -108,16 +108,16 @@ final class GestionPrelevementController extends AbstractController
         $entityManager->flush();
 
         $logs->info('Prélèvement analysé', [
-        'prelevement_id' => $prelevement->getId(),
-        'analyseur_id' => $verifRole->getId(),
-    ]);
+            'prelevement_id' => $prelevement->getId(),
+            'analyseur_id' => $verifRole->getId(),
+        ]);
 
         $this->addFlash('success', "Prélèvement analysé avec succés.");
         return $this->redirectToRoute('gestion_prelevement');
     }
 
     #[Route('/gestion_prelevement/modif/{id}', name: 'gestion_prelevement_modif', methods: ['POST'])]
-    public function modifPrelevement(int $id, Request $request, EntityManagerInterface $entityManager,SessionInterface $session,): Response
+    public function modifPrelevement(int $id, Request $request, EntityManagerInterface $entityManager, SessionInterface $session, ): Response
     {
         $prelevement = $entityManager->getRepository(Prelevement::class)->find($id);
 
@@ -184,19 +184,19 @@ final class GestionPrelevementController extends AbstractController
             return $this->redirectToRoute('gestion_prelevement');
         }
 
-            $datePrelevement = $request->request->get('modifDatePrelevementNonAnalyse');
-            $emplacementId = $request->request->get('modifEmplacementPrelevementNonAnalyse');
+        $datePrelevement = $request->request->get('modifDatePrelevementNonAnalyse');
+        $emplacementId = $request->request->get('modifEmplacementPrelevementNonAnalyse');
 
-            if ($datePrelevement) {
-                $prelevement->setDatePrelevement(new \DateTime($datePrelevement));
-            }
+        if ($datePrelevement) {
+            $prelevement->setDatePrelevement(new \DateTime($datePrelevement));
+        }
 
-            if ($emplacementId) {
-                $emplacement = $entityManager->getRepository(Emplacement::class)->find($emplacementId);
-                if ($emplacement) {
-                    $prelevement->setEmplacement($emplacement);
-                }
+        if ($emplacementId) {
+            $emplacement = $entityManager->getRepository(Emplacement::class)->find($emplacementId);
+            if ($emplacement) {
+                $prelevement->setEmplacement($emplacement);
             }
+        }
 
         $entityManager->flush();
 
