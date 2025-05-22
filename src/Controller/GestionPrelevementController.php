@@ -46,6 +46,13 @@ final class GestionPrelevementController extends AbstractController
         $preleveur = $request->request->get('preleveurPrevelement');
         $verifRole = $entityManager->getRepository(Utilisateur::class)->find($preleveur);
         $emplacement = $entityManager->getRepository(Emplacement::class)->find($emplacementPrelevement);
+        $prelevementAvecEmplacementExistant = $entityManager->getRepository(Prelevement::class)->findOneBy(['emplacement' => $emplacement]);
+
+
+        if ($prelevementAvecEmplacementExistant) {
+            $this->addFlash('error', "Prélèvement déjà présent avec cet emplacement.");
+            return $this->redirectToRoute('gestion_prelevement');
+        }
 
         $date = new \DateTimeImmutable('today');
 
@@ -78,7 +85,8 @@ final class GestionPrelevementController extends AbstractController
     {
         $prelevement = $entityManager->getRepository(Prelevement::class)->find($id);
         if (!$prelevement) {
-            throw $this->createNotFoundException("Prélèvement non trouvé.");
+            $this->addFlash('error', "Prélèvement non trouvé.");
+            return $this->redirectToRoute('gestion_prelevement');
         }
 
         $analyseur = $request->request->get('analyseurPrevelement');
@@ -205,14 +213,16 @@ final class GestionPrelevementController extends AbstractController
     }
 
     #[Route('/gestion_prelevement/suppr/{id}', name: 'gestion_prelevement_suppr', methods: ['POST'])]
-    public function supprPrelevement(int $id, EntityManagerInterface $entityManager): Response
+    public function supprPrelevement(int $id, EntityManagerInterface $entityManager, LoggerInterface $logs): Response
     {
         $prelevement = $entityManager->getRepository(Prelevement::class)->find($id);
         if (!$prelevement) {
             $this->addFlash('error', "Prélèvement non trouvé.");
         }
 
-
+        $logs->info('Prélèvement supprimé', [
+            'prelevement_id' => $prelevement->getId(),
+        ]);
         $entityManager->remove($prelevement);
         $entityManager->flush();
 

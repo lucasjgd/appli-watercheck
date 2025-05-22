@@ -6,6 +6,7 @@ use App\Entity\Prelevement;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Utilisateur;
+use App\Entity\Emplacement;
 
 /**
  * @extends ServiceEntityRepository<Prelevement>
@@ -43,8 +44,8 @@ class PrelevementRepository extends ServiceEntityRepository
 
     public function prelevementOrdreDate(): array
     {
-        return $this->createQueryBuilder('r')
-            ->orderBy('r.datePrelevement', 'DESC')
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.datePrelevement', 'DESC')
             ->getQuery()
             ->getResult();
     }
