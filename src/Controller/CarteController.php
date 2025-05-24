@@ -10,31 +10,22 @@ use App\Entity\Prelevement;
 use App\Entity\Emplacement;
 use App\Entity\Ville;
 use App\Entity\Region;
+use App\Repository\PrelevementRepository;
 
 final class CarteController extends AbstractController
 {
     #[Route('/carte', name: 'carte')]
-public function index(EntityManagerInterface $entityManager): Response
+public function index(EntityManagerInterface $entityManager, PrelevementRepository $prelevementRepo): Response
 {
-    $prelevementsEntities = $entityManager->getRepository(Prelevement::class)->estAnalyse();
+    $lesPrelevements = $entityManager->getRepository(Prelevement::class)->estAnalyse();
 
     $prelevements = [];
 
-    foreach ($prelevementsEntities as $prelevement) {
+    foreach ($lesPrelevements as $prelevement) {
         $emplacement = $prelevement->getEmplacement();
         $ville = $emplacement->getVille();
 
-        $criteresOk = 0;
-        if ($prelevement->getConductivite() < 1000) $criteresOk++;
-        if ($prelevement->getTurbidite() < 5) $criteresOk++;
-        if ($prelevement->getAlcalinite() >= 5 && $prelevement->getAlcalinite() <= 30) $criteresOk++;
-        if ($prelevement->getDurete() >= 10 && $prelevement->getDurete() <= 25) $criteresOk++;
-        $ph = strtolower( $prelevement->getTypePh()->getLibelle());
-        if (in_array($ph, ['ph neutre', 'ph basique'])) $criteresOk++;
-
-        if ($criteresOk == 5) $etat = 'Potable';
-        elseif ($criteresOk >= 3) $etat = 'Moyennement potable';
-        else $etat = 'Non potable';
+        $etat = $prelevementRepo->evaluerQualite($prelevement);
 
         $prelevements[] = [
             'lieu' => $emplacement->getLibelle(),

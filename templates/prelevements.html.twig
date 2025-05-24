@@ -8,72 +8,41 @@
 	<main class="container my-5 content">
 		<h2 class="text-start mb-4">Les prélèvements effectués</h2>
 
-		<form id="formulaire-filtre" class="mb-4 d-flex align-items-center gap-3">
+		<form id="formulaire-filtre" class="mb-4 d-flex align-items-center gap-3" method="get">
 			<label for="filtre-ville" class="form-label m-0">Filtrer :</label>
 
-			<select id="filtre-ville" class="form-select w-auto">
+			<select name="ville" id="filtre-ville" class="form-select w-auto">
 				<option value="">Sélectionnez une ville</option>
 				{% for ville in villes %}
-					<option value="{{ ville.libelle }}">{{ ville.libelle }}</option>
+					<option value="{{ ville.libelle }}" {{ app.request.get('ville') == ville.libelle ? 'selected' : '' }}>
+						{{ ville.libelle }}
+					</option>
 				{% endfor %}
 			</select>
 
-			<select id="filtre-region" class="form-select w-auto">
+			<select name="region" id="filtre-region" class="form-select w-auto">
 				<option value="">Sélectionnez une région</option>
 				{% for region in regions %}
-					<option value="{{ region.libelle }}">{{ region.libelle }}</option>
+					<option value="{{ region.libelle }}" {{ app.request.get('region') == region.libelle ? 'selected' : '' }}>
+						{{ region.libelle }}
+					</option>
 				{% endfor %}
 			</select>
 
-			<select id="filtre-qualite" class="form-select w-auto">
+			<select name="qualite" id="filtre-qualite" class="form-select w-auto">
 				<option value="">Eau potable ?</option>
-				<option value="potable">Oui</option>
-				<option value="moyennement-potable">Moyennement</option>
-				<option value="non-potable">Non</option>
+				<option value="potable" {{ app.request.get('qualite') == 'potable' ? 'selected' : '' }}>Oui</option>
+				<option value="moyennement-potable" {{ app.request.get('qualite') == 'moyennement-potable' ? 'selected' : '' }}>Moyennement</option>
+				<option value="non-potable" {{ app.request.get('qualite') == 'non-potable' ? 'selected' : '' }}>Non</option>
 			</select>
 
-			<button type="button" id="bouton-filtrer" class="btn btn-primary">Filtrer</button>
+			<button type="submit" class="btn btn-primary">Filtrer</button>
 		</form>
 
 
 		<div class="row">
 			{% for prelevement in prelevements %}
-				{% set bonneConductivite = prelevement.conductivite < 1000 %}
-				{% set bonneTurbidite = prelevement.turbidite < 5 %}
-				{% set bonneAlcalinite = prelevement.alcalinite >= 5 and prelevement.alcalinite <= 30 %}
-				{% set bonneDurete = prelevement.durete >= 10 and prelevement.durete <= 25 %}
-				{% set verifPh = prelevement.typePh.libelle|lower|replace({'ph ': ''}) %}
-				{% set bonPh = verifPh in ['neutre', 'basique'] %}
-
-				{% set criteresOk = 0 %}
-				{% if bonneConductivite %}
-					{% set criteresOk = criteresOk + 1 %}
-				{% endif %}
-				{% if bonneTurbidite %}
-					{% set criteresOk = criteresOk + 1 %}
-				{% endif %}
-				{% if bonneAlcalinite %}
-					{% set criteresOk = criteresOk + 1 %}
-				{% endif %}
-				{% if bonneDurete %}
-					{% set criteresOk = criteresOk + 1 %}
-				{% endif %}
-				{% if bonPh %}
-					{% set criteresOk = criteresOk + 1 %}
-				{% endif %}
-
-				{% if criteresOk == 5 %}
-					{% set qualiteEau = 'potable' %}
-					{% set classeEau = 'potable' %}
-				{% elseif criteresOk >= 3 %}
-					{% set qualiteEau = 'moyennement potable' %}
-					{% set classeEau = 'moyennement-potable' %}
-				{% else %}
-					{% set qualiteEau = 'non potable' %}
-					{% set classeEau = 'non-potable' %}
-				{% endif %}
-
-				<div class="col-md-4 prelevement-card" data-ville="{{ prelevement.emplacement.ville.libelle }}" data-region="{{ prelevement.emplacement.ville.region.libelle }}" data-qualite="{{ classeEau }}">
+				<div class="col-md-4 prelevement-card">
 					<div class="card p-3 mb-3">
 						<h5 class="card-title">Emplacement :
 							{{ prelevement.emplacement.libelle }}</h5>
@@ -83,8 +52,10 @@
 							{{ prelevement.emplacement.ville.region.libelle }}</p>
 						<p class="card-text mt-0 mb-0">Date :
 							{{ prelevement.datePrelevement|date('d/m/Y') }}</p>
-						<p class="card-text {{ classeEau }}">Eau :
-							{{ qualiteEau }}</p>
+						<p class="card-text {{ prelevement.qualite }}">Eau :
+							{{ prelevement.qualite|replace({'-': ' '}) }}
+						</p>
+
 					</div>
 				</div>
 			{% endfor %}

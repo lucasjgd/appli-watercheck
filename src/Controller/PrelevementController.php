@@ -11,22 +11,48 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Prelevement;
 use App\Entity\Ville;
 use App\Entity\Region;
+use App\Repository\PrelevementRepository;
 
 
 
 final class PrelevementController extends AbstractController
 {
     #[Route('/prelevements', name: 'prelevements')]
-    public function index(EntityManagerInterface $entityManager, PaginatorInterface $pagination, Request $request): Response
+    public function index(EntityManagerInterface $entityManager, PaginatorInterface $pagination, Request $request, PrelevementRepository $prelevementRepo ): Response
     {
-        $prelevements = $entityManager->getRepository(Prelevement::class)->estAnalyse();
+        $ville = $request->query->get('ville');
+        $region = $request->query->get('region');
+        $qualite = $request->query->get('qualite');
+
+        $prelevementsFiltres = $entityManager->getRepository(Prelevement::class)->filtrePrelevement($ville, $region);
+
+        $prelevementsQualites = [];
+
+        foreach ($prelevementsFiltres as $p) {
+            $resultat = $prelevementRepo->evaluerQualite($p);
+            $p->qualite = $resultat;
+
+            if (!$qualite || $qualite === $resultat) {
+                $prelevementsQualites[] = $p;
+            }
+        }
+
+
         $prelevementsPagination = $pagination->paginate(
-        $prelevements,
-        $request->query->getInt('page', 1), 
-        9 
-    );
+            $prelevementsQualites,
+            $request->query->getInt('page', 1),
+            9
+        );
+
         $villes = $entityManager->getRepository(Ville::class)->findAll();
         $regions = $entityManager->getRepository(Region::class)->regionOrdreA();
-        return $this->render('prelevements.html.twig', ['prelevements' => $prelevementsPagination,'regions' => $regions,'villes' => $villes]);
+
+        return $this->render('prelevements.html.twig', [
+            'prelevements' => $prelevementsPagination,
+            'regions' => $regions,
+            'villes' => $villes,
+        ]);
     }
+
+    
 }
