@@ -32,12 +32,12 @@
 						<div class="tab-pane fade show active" id="login" role="tabpanel">
 							<form method="POST" action="{{ path('traitement_connexion') }}">
 								<div class="mb-3">
-									<label for="loginEmail" class="form-label">Adresse e-mail</label>
-									<input type="email" name="email" class="form-control" id="loginEmail" required>
+									<label for="mail-connexion" class="form-label">Adresse e-mail</label>
+									<input type="email" name="mail-connexion" class="form-control" id="mail-connexion" required>
 								</div>
 								<div class="mb-3">
-									<label for="loginPassword" class="form-label">Mot de passe</label>
-									<input type="password" class="form-control" name="password" id="loginPassword" required>
+									<label for="mdp-connexion" class="form-label">Mot de passe</label>
+									<input type="password" class="form-control" name="mdp-connexion" id="mdp-connexion" required>
 								</div>
 								<button type="submit" class="btn btn-primary w-100">Se connecter</button>
 							</form>
@@ -47,20 +47,20 @@
 						<div class="tab-pane fade" id="register" role="tabpanel">
 							<form action="{{ path('traitement-inscription') }}" method="POST">
 								<div class="mb-3">
-									<label for="registerName" class="form-label">Nom</label>
-									<input type="text" class="form-control" id="registerName" name="registerName" required>
+									<label for="nom-inscription" class="form-label">Nom</label>
+									<input type="text" class="form-control" id="nom-inscription" name="nom-inscription" required>
 								</div>
 								<div class="mb-3">
-									<label for="registerEmail" class="form-label">Adresse e-mail</label>
-									<input type="email" class="form-control" id="registerEmail" name="registerEmail" required>
+									<label for="mail-inscription" class="form-label">Adresse e-mail</label>
+									<input type="email" class="form-control" id="mail-inscription" name="mail-inscription" required>
 								</div>
 								<div class="mb-3">
-									<label for="registerPassword" class="form-label">Mot de passe</label>
-									<input type="password" class="form-control" id="registerPassword" name="registerPassword" required>
+									<label for="mdp-inscription" class="form-label">Mot de passe</label>
+									<input type="password" class="form-control" id="mdp-inscription" name="mdp-inscription" required>
 								</div>
 								<div class="mb-3">
-									<label for="registerPasswordConfirmation" class="form-label">Confirmation du mot de passe</label>
-									<input type="password" class="form-control" id="registerPasswordConfirmation" name="registerPasswordConfirmation" required>
+									<label for="mdpConfirm-inscription" class="form-label">Confirmation du mot de passe</label>
+									<input type="password" class="form-control" id="mdpConfirm-inscription" name="mdpConfirm-inscription" required>
 								</div>
 								<button type="submit" class="btn btn-primary w-100">S'inscrire</button>
 							</form>

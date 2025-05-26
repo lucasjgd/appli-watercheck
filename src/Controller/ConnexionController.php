@@ -27,8 +27,10 @@ class ConnexionController extends AbstractController
     #[Route('/traitement-connexion', name: 'traitement_connexion', methods: ['POST'])]
     public function traitementConnexion(Request $request, EntityManagerInterface $em, SessionInterface $session, UserPasswordHasherInterface $passwordHasher): Response
     {
-        $email = $request->request->get('email');
-        $mdp = $request->request->get('password');
+        
+        $email = $request->request->get('mail-connexion');
+        $mdp = $request->request->get('mdp-connexion');
+
 
         $utilisateur = $em->getRepository(Utilisateur::class)->findOneBy(['mail' => $email]);
 

@@ -16,10 +16,10 @@ class InscriptionController extends AbstractController
         $utilisateur = new Client();
 
         if ($request->isMethod('POST')) {
-            $nom = $request->request->get('registerName');
-            $mail = $request->request->get('registerEmail');
-            $mdp = $request->request->get('registerPassword');
-            $confirmMdp = $request->request->get('registerPasswordConfirmation');
+            $nom = $request->request->get('nom-inscription');
+            $mail = $request->request->get('mail-inscription');
+            $mdp = $request->request->get('mdp-inscription');
+            $confirmMdp = $request->request->get('mdpConfirm-inscription');
 
             if ($mdp !== $confirmMdp) {
                 $this->addFlash('error', 'Les mots de passe ne correspondent pas.');

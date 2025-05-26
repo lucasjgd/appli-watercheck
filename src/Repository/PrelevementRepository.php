@@ -60,7 +60,8 @@ class PrelevementRepository extends ServiceEntityRepository
             ->andWhere('p.durete IS NOT NULL')
             ->andWhere('p.alcalinite IS NOT NULL')
             ->andWhere('p.typePh IS NOT NULL')
-            ->andWhere('p.conductivite IS NOT NULL');
+            ->andWhere('p.conductivite IS NOT NULL')
+            ->orderBy('p.datePrelevement', 'DESC');
 
 
         if ($ville) {
