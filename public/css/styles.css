@@ -51,6 +51,7 @@ header {
     border-radius: 50%;
     border: 2px solid black;
 }
+
 .rond-orange {
     background-color: orange;
     width: 15px;
@@ -58,6 +59,7 @@ header {
     border-radius: 50%;
     border: 2px solid black;
 }
+
 .rond-rouge {
     background-color: red;
     width: 15px;
@@ -114,8 +116,6 @@ header {
     color: white;
     transition: background-color 0.2s;
 }
-
-
 
 footer {
     background-color: #0e7bd0;

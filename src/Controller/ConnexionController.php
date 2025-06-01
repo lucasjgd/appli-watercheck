@@ -1,6 +1,5 @@
 <?php
 
-// src/Controller/ConnexionController.php
 namespace App\Controller;
 
 use App\Entity\Utilisateur;

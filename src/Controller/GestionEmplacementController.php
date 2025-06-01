@@ -18,6 +18,11 @@ final class GestionEmplacementController extends AbstractController
     #[Route('/gestion_emplacement', name: 'gestion_emplacement')]
     public function index(EntityManagerInterface $entityManager, PaginatorInterface $pagination, Request $request): Response
     {
+        $utilisateur = $request->getSession()->get('utilisateur');
+        if (!$utilisateur || strtolower($utilisateur['role']) !== 'admin' || strtolower($utilisateur['role']) !== 'preleveur') {
+            return $this->redirectToRoute('index');
+        }
+
         $emplacements = $entityManager->getRepository(Emplacement::class)->emplacementOrdreVille();
 
         $emplacementsPagination = $pagination->paginate(

@@ -23,6 +23,11 @@ final class GestionPrelevementController extends AbstractController
     #[Route('/gestion_prelevement', name: 'gestion_prelevement')]
     public function index(EntityManagerInterface $entityManager, PaginatorInterface $pagination, Request $request): Response
     {
+        $utilisateur = $request->getSession()->get('utilisateur');
+        if (!$utilisateur || strtolower($utilisateur['role']) !== 'admin' || strtolower($utilisateur['role']) !== 'preleveur' || strtolower($utilisateur['role']) !== 'analyseur') {
+            return $this->redirectToRoute('index');
+        }
+
         $emplacements = $entityManager->getRepository(Emplacement::class)->findAll();
         $prelevements = $entityManager->getRepository(Prelevement::class)->prelevementOrdreDate();
         $prelevementsPagination = $pagination->paginate(
@@ -42,6 +47,7 @@ final class GestionPrelevementController extends AbstractController
     #[Route('/gestion_prelevement/ajout', name: 'gestion_prelevement_ajout', methods: ['POST'])]
     public function ajoutPrelevement(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logs): Response
     {
+        
         $emplacementPrelevement = $request->request->get('emplacementPrelevement');
         $preleveur = $request->request->get('preleveurPrevelement');
         $verifRole = $entityManager->getRepository(Utilisateur::class)->find($preleveur);

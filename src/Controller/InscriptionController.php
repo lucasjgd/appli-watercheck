@@ -42,6 +42,6 @@ class InscriptionController extends AbstractController
             return $this->redirectToRoute('connexion'); 
         }
 
-        return $this->render('inscription/index.html.twig');
+        return $this->render('index.html.twig');
     }
 }

@@ -16,6 +16,10 @@ final class GestionTypePHController extends AbstractController
     #[Route('gestion_type_ph', name: 'gestion_type_ph')]
     public function index(EntityManagerInterface $entityManager, PaginatorInterface $pagination, Request $request): Response
     {
+        $utilisateur = $request->getSession()->get('utilisateur');
+        if (!$utilisateur || strtolower($utilisateur['role']) !== 'admin' || strtolower($utilisateur['role']) !== 'analyseur') {
+            return $this->redirectToRoute('index');
+        }
         $types = $entityManager->getRepository(TypePH::class)->findAll();
 
         $typesPagination = $pagination->paginate(
