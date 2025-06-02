@@ -19,7 +19,7 @@ final class GestionEmplacementController extends AbstractController
     public function index(EntityManagerInterface $entityManager, PaginatorInterface $pagination, Request $request): Response
     {
         $utilisateur = $request->getSession()->get('utilisateur');
-        if (!$utilisateur || strtolower($utilisateur['role']) !== 'admin' || strtolower($utilisateur['role']) !== 'preleveur') {
+        if (!$utilisateur || strtolower($utilisateur['role']) !== 'admin' && strtolower($utilisateur['role']) !== 'preleveur') {
             return $this->redirectToRoute('index');
         }
 
