@@ -5,9 +5,9 @@
 
 {% block body %}
 
-	<main class="container d-flex align-items-center justify-content-around m-4 content">
-        <img src="{{ asset('images/logo.png') }}" alt="Logo WaterCheck" class="me-4 h-auto">
-        <div class = "align-items-center d-flex flex-column">
+	<main class="container d-flex align-items-center justify-content-around content accueil-content">
+        <img src="{{ asset('images/logo.png') }}" alt="Logo WaterCheck" class="me-4 h-auto logo-img">
+        <div class = "align-items-center d-flex flex-column text-zone">
             <h2>Bienvenue sur WaterCheck !</h2>
             <p>Application de gestion de prélèvement d'eau.</p>
             <a href="{{ path('prelevements') }}" class="btn btn-primary">Voir les prélèvements</a>

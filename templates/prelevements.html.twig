@@ -7,38 +7,46 @@
 
 	<main class="container my-5 content">
 		<h2 class="text-start mb-4">Les prélèvements effectués</h2>
+		<form id="formulaire-filtre" class="mb-4 row row-cols-1 row-cols-md-auto g-3 align-items-center" method="get">
+			<div class="col">
+				<label for="filtre-ville" class="form-label m-0">Filtrer :</label>
+			</div>
 
-		<form id="formulaire-filtre" class="mb-4 d-flex align-items-center gap-3" method="get">
-			<label for="filtre-ville" class="form-label m-0">Filtrer :</label>
+			<div class="col">
+				<select name="ville" id="filtre-ville" class="form-select">
+					<option value="">Sélectionnez une ville</option>
+					{% for ville in villes %}
+						<option value="{{ ville.libelle }}" {{ app.request.get('ville') == ville.libelle ? 'selected' : '' }}>
+							{{ ville.libelle }}
+						</option>
+					{% endfor %}
+				</select>
+			</div>
 
-			<select name="ville" id="filtre-ville" class="form-select w-auto">
-				<option value="">Sélectionnez une ville</option>
-				{% for ville in villes %}
-					<option value="{{ ville.libelle }}" {{ app.request.get('ville') == ville.libelle ? 'selected' : '' }}>
-						{{ ville.libelle }}
-					</option>
-				{% endfor %}
-			</select>
+			<div class="col">
+				<select name="region" id="filtre-region" class="form-select">
+					<option value="">Sélectionnez une région</option>
+					{% for region in regions %}
+						<option value="{{ region.libelle }}" {{ app.request.get('region') == region.libelle ? 'selected' : '' }}>
+							{{ region.libelle }}
+						</option>
+					{% endfor %}
+				</select>
+			</div>
 
-			<select name="region" id="filtre-region" class="form-select w-auto">
-				<option value="">Sélectionnez une région</option>
-				{% for region in regions %}
-					<option value="{{ region.libelle }}" {{ app.request.get('region') == region.libelle ? 'selected' : '' }}>
-						{{ region.libelle }}
-					</option>
-				{% endfor %}
-			</select>
+			<div class="col">
+				<select name="qualite" id="filtre-qualite" class="form-select">
+					<option value="">Eau potable ?</option>
+					<option value="potable" {{ app.request.get('qualite') == 'potable' ? 'selected' : '' }}>Oui</option>
+					<option value="moyennement-potable" {{ app.request.get('qualite') == 'moyennement-potable' ? 'selected' : '' }}>Moyennement</option>
+					<option value="non-potable" {{ app.request.get('qualite') == 'non-potable' ? 'selected' : '' }}>Non</option>
+				</select>
+			</div>
 
-			<select name="qualite" id="filtre-qualite" class="form-select w-auto">
-				<option value="">Eau potable ?</option>
-				<option value="potable" {{ app.request.get('qualite') == 'potable' ? 'selected' : '' }}>Oui</option>
-				<option value="moyennement-potable" {{ app.request.get('qualite') == 'moyennement-potable' ? 'selected' : '' }}>Moyennement</option>
-				<option value="non-potable" {{ app.request.get('qualite') == 'non-potable' ? 'selected' : '' }}>Non</option>
-			</select>
-
-			<button type="submit" class="btn btn-primary">Filtrer</button>
+			<div class="col">
+				<button type="submit" class="btn btn-primary">Filtrer</button>
+			</div>
 		</form>
-
 
 		<div class="row">
 			{% for prelevement in prelevements %}

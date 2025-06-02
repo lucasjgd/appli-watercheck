@@ -23,37 +23,39 @@
 				<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ajoutUtilisateurModal">Ajouter un utilisateur</button>
 			</div>
 
-			<table class="table table-bordered table-hover">
-				<thead>
-					<tr>
-						<th>Nom</th>
-						<th>Email</th>
-						<th>Rôle</th>
-						<th>Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for utilisateur in utilisateurs %}
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover">
+					<thead>
 						<tr>
-							<td>{{ utilisateur.nom }}</td>
-							<td>{{ utilisateur.mail }}</td>
-							<td>{{ utilisateur.role }}</td>
-							<td class = "d-flex">
-								<button class="btn btn-warning btn-sm me-3" data-bs-toggle="modal" data-bs-target="#modifUtilisateurModal" data-id="{{ utilisateur.id }}" data-nom="{{ utilisateur.nom }}" data-mail="{{ utilisateur.mail }}" data-role="{{ utilisateur.role }}">
-									Modifier
-								</button>
-								<form class="btn-suppr" method="POST" action="{{ path('gestion_utilisateur_suppr', { id: utilisateur.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
-									<button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-								</form>
-							</td>
+							<th>Nom</th>
+							<th>Email</th>
+							<th>Rôle</th>
+							<th>Actions</th>
 						</tr>
-					{% else %}
-						<tr>
-							<td colspan="4" class="text-center">Aucun utilisateur trouvé.</td>
-						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						{% for utilisateur in utilisateurs %}
+							<tr>
+								<td>{{ utilisateur.nom }}</td>
+								<td>{{ utilisateur.mail }}</td>
+								<td>{{ utilisateur.role }}</td>
+								<td class="d-flex">
+									<button class="btn btn-warning btn-sm me-3" data-bs-toggle="modal" data-bs-target="#modifUtilisateurModal" data-id="{{ utilisateur.id }}" data-nom="{{ utilisateur.nom }}" data-mail="{{ utilisateur.mail }}" data-role="{{ utilisateur.role }}">
+										Modifier
+									</button>
+									<form class="btn-suppr" method="POST" action="{{ path('gestion_utilisateur_suppr', { id: utilisateur.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+										<button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+									</form>
+								</td>
+							</tr>
+						{% else %}
+							<tr>
+								<td colspan="4" class="text-center">Aucun utilisateur trouvé.</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
 			<div class="d-flex justify-content-center mt-4">
 				{{ knp_pagination_render(utilisateurs) }}</div>
 		</div>
@@ -119,7 +121,7 @@
 							<div class="mb-3">
 								<label class="form-label">Mot de passe</label>
 								<input type="password" name="modif-mdp" id="modif-mdp" class="form-control">
-								<label class = "fst-italic mt-1" >Laissez vide pour conserver.</label>
+								<label class="fst-italic mt-1">Laissez vide pour conserver.</label>
 							</div>
 							<div class="mb-3">
 								<label class="form-label">Rôle</label>

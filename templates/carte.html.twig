@@ -1,20 +1,32 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Carte des prélèvements{% endblock %}
+{% block title %}Carte des prélèvements
+{% endblock %}
 
 {% block body %}
-<main class="container content my-5">
-    <h2 class="mb-4">Carte des Prélèvements</h2>
-    <div class="d-flex gap-5 align-items-center">
-        <div class="d-flex flex-column gap-2 w-25">
-            <div class="d-flex gap-1 align-items-center"><div class="rond-vert"></div><p class="mb-0">Eau potable</p></div>
-            <div class="d-flex gap-1 align-items-center"><div class="rond-orange"></div><p class="mb-0">Eau moyennement-potable</p></div>
-            <div class="d-flex gap-1 align-items-center"><div class="rond-rouge"></div><p class="mb-0">Eau non potable</p></div>
-        </div>
-        {% component 'MapPrelevement' with {
-            prelevements: prelevements
-        } %}
-        {% endcomponent %}
-    </div>
-</main>
+	<main class="container content my-5">
+		<h2 class="mb-4">Carte des Prélèvements</h2>
+		<div class="d-flex flex-column flex-md-row gap-4 align-items-start">
+			<div class="d-flex flex-row flex-md-column gap-2 w-100 w-md-25">
+				<div class="d-flex gap-1 align-items-center">
+					<div class="rond-vert"></div>
+					<p class="mb-0">Eau potable</p>
+				</div>
+				<div class="d-flex gap-1 align-items-center">
+					<div class="rond-orange"></div>
+					<p class="mb-0">Eau moyennement-potable</p>
+				</div>
+				<div class="d-flex gap-1 align-items-center">
+					<div class="rond-rouge"></div>
+					<p class="mb-0">Eau non potable</p>
+				</div>
+			</div>
+
+			{% component 'MapPrelevement' with {
+      prelevements: prelevements
+  } %}
+			{% endcomponent %}
+		</div>
+
+	</main>
 {% endblock %}

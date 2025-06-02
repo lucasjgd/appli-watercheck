@@ -16,86 +16,91 @@
 
 	<main class="m-5 content">
 		<h1 class="mb-4 text-center">Gestion des Prélèvements</h1>
-		<div class="d-flex gap-2 align-items-center">
+		<div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2">
 			<p class="mb-0">Filtrer :</p>
-			<button class="btn btn-primary me-2" onclick="filtrerPrelevements('tous')">Tous les prélèvements</button>
-			<button class="btn btn-primary me-2" onclick="filtrerPrelevements('analyses')">Prélèvements Analysés</button>
-			<button class="btn btn-primary" onclick="filtrerPrelevements('nonAnalyses')">Prélèvements non analysés</button>
+			<div class="d-flex flex-wrap gap-2">
+				<button class="btn btn-primary" onclick="filtrerPrelevements('tous')">Tous les prélèvements</button>
+				<button class="btn btn-primary" onclick="filtrerPrelevements('analyses')">Prélèvements Analysés</button>
+				<button class="btn btn-primary" onclick="filtrerPrelevements('nonAnalyses')">Prélèvements non analysés</button>
+			</div>
 		</div>
+
 
 		{% if app.session.get('utilisateur').role|lower == "preleveur" or app.session.get('utilisateur').role|lower == "admin"  %}
 
-			<div class="d-flex justify-content-end mb-3">
+			<div class="d-flex justify-content-end mb-3 mt-3">
 				<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ajoutPrelevementModal">Ajouter un prélèvement</button>
 			</div>
 
 		{% endif %}
 
-		<table class="table table-bordered table-hover">
-			<thead>
-				<tr>
-					<th>Date</th>
-					<th>Emplacement</th>
-					<th>Conductivité</th>
-					<th>Turbidité</th>
-					<th>Alcalinité</th>
-					<th>Dureté</th>
-					<th>Type de pH</th>
-					<th>Actions</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for prelevement in prelevements %}
-					{% set estAnalyse = prelevement.typePh and prelevement.conductivite and prelevement.turbidite and prelevement.alcalinite and prelevement.durete %}
-					<tr class="prelevement {% if estAnalyse %}analyse{% else %}non-analyse{% endif %}">
-						<td>{{ prelevement.datePrelevement|date('d/m/Y') }}</td>
-						<td>{{ prelevement.emplacement.libelle }}</td>
-						<td>{{ prelevement.conductivite }}</td>
-						<td>{{ prelevement.turbidite }}</td>
-						<td>{{ prelevement.alcalinite }}</td>
-						<td>{{ prelevement.durete }}</td>
-						{% if prelevement.typePh is not null %}
-							<td>{{ prelevement.typePh.libelle }}</td>
-						{% else %}
-							<td></td>
-						{% endif %}
-						<td>
-							{% if prelevement.typePh and prelevement.conductivite and prelevement.turbidite and prelevement.alcalinite and prelevement.durete %}
-								<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifierPrelevementModal" data-id="{{ prelevement.id }}" data-date="{{ prelevement.datePrelevement|date('Y-m-d') }}" data-emplacementid="{{ prelevement.emplacement.id }}" data-conductivite="{{ prelevement.conductivite }}" data-turbidite="{{ prelevement.turbidite }}" data-alcalinite="{{ prelevement.alcalinite }}" data-durete="{{ prelevement.durete }}" data-typeph="{{ prelevement.typePh ? prelevement.typePh.id : '' }}">
-									Modifier
-								</button>
-							{% elseif not prelevement.typePh and not prelevement.conductivite and not prelevement.turbidite and not prelevement.alcalinite and not prelevement.durete and app.session.get('utilisateur').role|lower == "preleveur" %}
-								<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifierPrelevementNonAnalyseModal" data-idnonanalyse="{{ prelevement.id }}" data-datenonanalyse="{{ prelevement.datePrelevement|date('Y-m-d') }}" data-emplacementidnonanalyse="{{ prelevement.emplacement.id }}">
-									Modifier le prélèvement non-analysé
-								</button>
-							{% elseif not prelevement.typePh and not prelevement.conductivite and not prelevement.turbidite and not prelevement.alcalinite and not prelevement.durete and app.session.get('utilisateur').role|lower == "admin" %}
-								<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifierPrelevementNonAnalyseModal" data-idnonanalyse="{{ prelevement.id }}" data-datenonanalyse="{{ prelevement.datePrelevement|date('Y-m-d') }}" data-emplacementidnonanalyse="{{ prelevement.emplacement.id }}">
-									Modifier le prélèvement non-analysé
-								</button>
-								<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#analyserPrelevementModal" data-id="{{ prelevement.id }}">
-									Analyser
-								</button>
-							{% else %}
-								<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#analyserPrelevementModal" data-id="{{ prelevement.id }}">
-									Analyser
-								</button>
-							{% endif %}
-							{% if app.session.get('utilisateur').role|lower == "admin" %}
-								<form class="btn-suppr" method="POST" action="{{ path('gestion_prelevement_suppr', { id: prelevement.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce prélèvement ?');">
-									<button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-								</form>
-							{% endif %}
-						</td>
+		<div class="table-responsive">
+			<table class="table table-bordered table-hover">
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>Emplacement</th>
+						<th>Conductivité</th>
+						<th>Turbidité</th>
+						<th>Alcalinité</th>
+						<th>Dureté</th>
+						<th>Type de pH</th>
+						<th>Actions</th>
 					</tr>
-				</td>
-			</tbody>
-		</tr>
-	{% else %}
-		<tr>
-			<td colspan="4" class="text-center">Aucun prélèvement trouvé.</td>
-		</tr>
-	{% endfor %}
-</tbody></table><div class="d-flex justify-content-center mt-4">
+				</thead>
+				<tbody>
+					{% for prelevement in prelevements %}
+						{% set estAnalyse = prelevement.typePh and prelevement.conductivite and prelevement.turbidite and prelevement.alcalinite and prelevement.durete %}
+						<tr class="prelevement {% if estAnalyse %}analyse{% else %}non-analyse{% endif %}">
+							<td>{{ prelevement.datePrelevement|date('d/m/Y') }}</td>
+							<td>{{ prelevement.emplacement.libelle }}</td>
+							<td>{{ prelevement.conductivite }}</td>
+							<td>{{ prelevement.turbidite }}</td>
+							<td>{{ prelevement.alcalinite }}</td>
+							<td>{{ prelevement.durete }}</td>
+							{% if prelevement.typePh is not null %}
+								<td>{{ prelevement.typePh.libelle }}</td>
+							{% else %}
+								<td></td>
+							{% endif %}
+							<td>
+								{% if prelevement.typePh and prelevement.conductivite and prelevement.turbidite and prelevement.alcalinite and prelevement.durete %}
+									<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifierPrelevementModal" data-id="{{ prelevement.id }}" data-date="{{ prelevement.datePrelevement|date('Y-m-d') }}" data-emplacementid="{{ prelevement.emplacement.id }}" data-conductivite="{{ prelevement.conductivite }}" data-turbidite="{{ prelevement.turbidite }}" data-alcalinite="{{ prelevement.alcalinite }}" data-durete="{{ prelevement.durete }}" data-typeph="{{ prelevement.typePh ? prelevement.typePh.id : '' }}">
+										Modifier
+									</button>
+								{% elseif not prelevement.typePh and not prelevement.conductivite and not prelevement.turbidite and not prelevement.alcalinite and not prelevement.durete and app.session.get('utilisateur').role|lower == "preleveur" %}
+									<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifierPrelevementNonAnalyseModal" data-idnonanalyse="{{ prelevement.id }}" data-datenonanalyse="{{ prelevement.datePrelevement|date('Y-m-d') }}" data-emplacementidnonanalyse="{{ prelevement.emplacement.id }}">
+										Modifier le prélèvement non-analysé
+									</button>
+								{% elseif not prelevement.typePh and not prelevement.conductivite and not prelevement.turbidite and not prelevement.alcalinite and not prelevement.durete and app.session.get('utilisateur').role|lower == "admin" %}
+									<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifierPrelevementNonAnalyseModal" data-idnonanalyse="{{ prelevement.id }}" data-datenonanalyse="{{ prelevement.datePrelevement|date('Y-m-d') }}" data-emplacementidnonanalyse="{{ prelevement.emplacement.id }}">
+										Modifier le prélèvement non-analysé
+									</button>
+									<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#analyserPrelevementModal" data-id="{{ prelevement.id }}">
+										Analyser
+									</button>
+								{% else %}
+									<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#analyserPrelevementModal" data-id="{{ prelevement.id }}">
+										Analyser
+									</button>
+								{% endif %}
+								{% if app.session.get('utilisateur').role|lower == "admin" %}
+									<form class="btn-suppr" method="POST" action="{{ path('gestion_prelevement_suppr', { id: prelevement.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce prélèvement ?');">
+										<button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+									</form>
+								{% endif %}
+							</td>
+						</tr>
+					</td>
+				</tbody>
+			</tr>
+		{% else %}
+			<tr>
+				<td colspan="4" class="text-center">Aucun prélèvement trouvé.</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table></div><div class="d-flex justify-content-center mt-4">
 {{ knp_pagination_render(prelevements) }}</div></main><div class="modal fade" id="ajoutPrelevementModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog">
 <div class="modal-content">
 	<form action="{{ path('gestion_prelevement_ajout') }}" method="POST">

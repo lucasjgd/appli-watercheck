@@ -19,102 +19,116 @@
 	</head>
 	<body>
 		<header class="text-white py-3">
-			<div class="container d-flex justify-content-between align-items-center">
-				<h1 class="m-0">WaterCheck</h1>
-				<nav>
-					<ul class="nav align-items-center">
-						<li class="nav-item">
-							<a class="nav-link text-white" href="{{ path('index') }}">Accueil</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link text-white" href="{{ path('prelevements') }}">Prélèvements</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link text-white" href="{{ path('carte') }}">Carte des prélèvements</a>
-						</li>
+			<div class="container">
+				<nav class="navbar navbar-expand-lg d-flex justify-content-between align-items-center p-0">
+					<h1 class="m-0">WaterCheck</h1>
 
-						{% if app.session.get('utilisateur') %}
-							{% set role = app.session.get('utilisateur').role|lower %}
+					<button class="navbar-toggler text-white border-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
 
-							{% if role == 'admin' %}
-								<li class="nav-item dropdown">
-									<a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-										Gestion
-									</a>
-									<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-										<li>
-											<a class="dropdown-item" href="{{ path('gestion_prelevement') }}">Gestion des prélèvements</a>
-										</li>
-										<li>
-											<a class="dropdown-item" href="{{ path('gestion_type_ph') }}">Gestion des types de pH</a>
-										</li>
-										<li>
-											<a class="dropdown-item" href="{{ path('gestion_emplacement') }}">Gestion des emplacements</a>
-										</li>
-										<li>
-											<a class="dropdown-item" href="{{ path('gestion_utilisateur') }}">Gestion des utilisateurs</a>
-										</li>
-									</ul>
-								</li>
-								<li class="nav-item">
-									<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2" href="{{ path('deconnexion') }}">{{ app.session.get('utilisateur').nom }}
-										<i class="fa-solid fa-right-from-bracket"></i>
-									</a>
-								</li>
-							{% elseif role == 'preleveur' %}
-								<li class="nav-item dropdown">
-									<a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-										Gestion
-									</a>
-									<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-										<li>
-											<a class="dropdown-item" href="{{ path('gestion_prelevement') }}">Gestion des prélèvements</a>
-										</li>
-										<li>
-											<a class="dropdown-item" href="{{ path('gestion_emplacement') }}">Gestion des emplacements</a>
-										</li>
-									</ul>
-								</li>
-								<li class="nav-item">
-									<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2" href="{{ path('deconnexion') }}">{{ app.session.get('utilisateur').nom }}
-										<i class="fa-solid fa-right-from-bracket"></i>
-									</a>
-								</li>
-							{% elseif role == 'analyseur' %}
-								<li class="nav-item dropdown">
-									<a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-										Gestion
-									</a>
-									<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-										<li>
-											<a class="dropdown-item" href="{{ path('gestion_prelevement') }}">Gestion des prélèvements</a>
-										</li>
-										<li>
-											<a class="dropdown-item" href="{{ path('gestion_type_ph') }}">Gestion des types de pH</a>
-										</li>
-									</ul>
-								</li>
-								<li class="nav-item">
-									<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2" href="{{ path('deconnexion') }}">{{ app.session.get('utilisateur').nom }}
-										<i class="fa-solid fa-right-from-bracket"></i>
-									</a>
-								</li>
+					<div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+						<ul class="navbar-nav align-items-center">
+							<li class="nav-item">
+								<a class="nav-link text-white" href="{{ path('index') }}">Accueil</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link text-white" href="{{ path('prelevements') }}">Prélèvements</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link text-white" href="{{ path('carte') }}">Carte des prélèvements</a>
+							</li>
+
+							{% if app.session.get('utilisateur') %}
+								{% set role = app.session.get('utilisateur').role|lower %}
+
+								{% if role == 'admin' %}
+									<li class="nav-item dropdown">
+										<a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+											Gestion
+										</a>
+										<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+											<li>
+												<a class="dropdown-item" href="{{ path('gestion_prelevement') }}">Gestion des prélèvements</a>
+											</li>
+											<li>
+												<a class="dropdown-item" href="{{ path('gestion_type_ph') }}">Gestion des types de pH</a>
+											</li>
+											<li>
+												<a class="dropdown-item" href="{{ path('gestion_emplacement') }}">Gestion des emplacements</a>
+											</li>
+											<li>
+												<a class="dropdown-item" href="{{ path('gestion_utilisateur') }}">Gestion des utilisateurs</a>
+											</li>
+										</ul>
+									</li>
+									<li class="nav-item">
+										<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2 color" href="{{ path('deconnexion') }}">
+											{{ app.session.get('utilisateur').nom }}
+											<i class="fa-solid fa-right-from-bracket color"></i>
+										</a>
+									</li>
+
+								{% elseif role == 'preleveur' %}
+									<li class="nav-item dropdown">
+										<a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+											Gestion
+										</a>
+										<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+											<li>
+												<a class="dropdown-item" href="{{ path('gestion_prelevement') }}">Gestion des prélèvements</a>
+											</li>
+											<li>
+												<a class="dropdown-item" href="{{ path('gestion_emplacement') }}">Gestion des emplacements</a>
+											</li>
+										</ul>
+									</li>
+									<li class="nav-item">
+										<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2 color" href="{{ path('deconnexion') }}">
+											{{ app.session.get('utilisateur').nom }}
+											<i class="fa-solid fa-right-from-bracket color"></i>
+										</a>
+									</li>
+
+								{% elseif role == 'analyseur' %}
+									<li class="nav-item dropdown">
+										<a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+											Gestion
+										</a>
+										<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+											<li>
+												<a class="dropdown-item" href="{{ path('gestion_prelevement') }}">Gestion des prélèvements</a>
+											</li>
+											<li>
+												<a class="dropdown-item" href="{{ path('gestion_type_ph') }}">Gestion des types de pH</a>
+											</li>
+										</ul>
+									</li>
+									<li class="nav-item">
+										<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2 color" href="{{ path('deconnexion') }}">
+											{{ app.session.get('utilisateur').nom }}
+											<i class="fa-solid fa-right-from-bracket color"></i>
+										</a>
+									</li>
+
+								{% else %}
+									<li class="nav-item">
+										<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2 color" href="{{ path('deconnexion') }}">
+											{{ app.session.get('utilisateur').nom }}
+											<i class="fa-solid fa-right-from-bracket color"></i>
+										</a>
+									</li>
+								{% endif %}
+
 							{% else %}
 								<li class="nav-item">
-									<a class="nav-link text-white" href="{{ path('deconnexion') }}">
-										Déconnexion ({{ app.session.get('utilisateur').nom }})
+									<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2 color" href="{{ path('connexion') }}">
+										<i class="fa-solid fa-user color"></i>
 									</a>
 								</li>
 							{% endif %}
-
-						{% else %}
-							<li class="nav-item">
-								<a class="d-flex align-items-center gap-1 nav-link p-2 bg-white rounded-2" href="{{ path('connexion') }}">
-									<i class="fa-solid fa-user"></i>
-								</a>
-							</li>
-						{% endif %}
-					</ul>
+						</ul>
+					</div>
 				</nav>
 			</div>
 		</header>
@@ -131,9 +145,10 @@
 		<script src="{{ asset('js/carte.js') }}"></script>
 		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" crossorigin="anonymous"></script>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-		<footer class="d-flex align-items-center flex-row justify-content-around p-3">
-			<p class="mt-0 mb-0">&copy; 2025 WaterCheck - Tous droits réservés</p>
-			<p class="mt-0 mb-0">Par Lucas JOGAND</p>
+		<footer class="d-flex flex-column flex-md-row align-items-center justify-content-around p-3 text-white">
+			<p class="mt-0 mb-0 text-center">&copy; 2025 WaterCheck - Tous droits réservés</p>
+			<p class="mt-0 mb-0 text-center">Par Lucas JOGAND</p>
 		</footer>
+
 	</body>
 </html>

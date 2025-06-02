@@ -22,43 +22,45 @@
 				<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLieuModal">Ajouter un emplacement</button>
 			</div>
 
-			<table class="table table-bordered table-hover">
-				<thead>
-					<tr>
-						<th>Nom</th>
-						<th>Latitude</th>
-						<th>Longitude</th>
-						<th>Ville</th>
-						<th>Région</th>
-						<th>Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for emplacement in emplacements %}
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover">
+					<thead>
 						<tr>
-							<td>{{ emplacement.libelle }}</td>
-							<td>{{ emplacement.latitude }}</td>
-							<td>{{ emplacement.longitude }}</td>
-							<td>{{ emplacement.ville.libelle }}</td>
-							<td>{{ emplacement.ville.region.libelle }}</td>
-							<td>
-								<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifLieuModal" data-id="{{ emplacement.id }}" data-libelle="{{ emplacement.libelle }}" data-latitude="{{ emplacement.latitude }}" data-longitude="{{ emplacement.longitude }}" data-ville="{{ emplacement.ville.id }}">
-									Modifier
-								</button>
-								{% if app.session.get('utilisateur').role|lower == "admin" %}
-									<form class="btn-suppr" method="POST" action="{{ path('gestion_emplacement_suppr', { id: emplacement.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet emplacement ?');">
-										<button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-									</form>
-								{% endif %}
-							</td>
+							<th>Nom</th>
+							<th>Latitude</th>
+							<th>Longitude</th>
+							<th>Ville</th>
+							<th>Région</th>
+							<th>Actions</th>
 						</tr>
-					{% else %}
-						<tr>
-							<td colspan="4" class="text-center">Aucun emplacement trouvé.</td>
-						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						{% for emplacement in emplacements %}
+							<tr>
+								<td>{{ emplacement.libelle }}</td>
+								<td>{{ emplacement.latitude }}</td>
+								<td>{{ emplacement.longitude }}</td>
+								<td>{{ emplacement.ville.libelle }}</td>
+								<td>{{ emplacement.ville.region.libelle }}</td>
+								<td>
+									<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modifLieuModal" data-id="{{ emplacement.id }}" data-libelle="{{ emplacement.libelle }}" data-latitude="{{ emplacement.latitude }}" data-longitude="{{ emplacement.longitude }}" data-ville="{{ emplacement.ville.id }}">
+										Modifier
+									</button>
+									{% if app.session.get('utilisateur').role|lower == "admin" %}
+										<form class="btn-suppr" method="POST" action="{{ path('gestion_emplacement_suppr', { id: emplacement.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet emplacement ?');">
+											<button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+										</form>
+									{% endif %}
+								</td>
+							</tr>
+						{% else %}
+							<tr>
+								<td colspan="4" class="text-center">Aucun emplacement trouvé.</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
 			<div class="d-flex justify-content-center mt-4">
 				{{ knp_pagination_render(emplacements) }}</div>
 		</div>
